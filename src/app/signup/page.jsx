@@ -1,164 +1,169 @@
 "use client";
-import { callAPI } from '@/utils/api-caller';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { setToken, setUser } from '@/utils/helper';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 const SignUpPage = () => {
-    const [firstName, setFirstName] = useState("");
-    const [lastName, setLastName] = useState("");
-    const [email, setEmail] = useState("");
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [errorText, setErrorText] = useState("");
-    const router = useRouter();
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [idEmployee, setIdEmployee] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorText, setErrorText] = useState("");
+  const router = useRouter();
 
-    const onSignUpClick = async () => {
-        if (!firstName || !lastName || !email || !username || !password) {
-            setErrorText("Have missing data!");
-            return;
-        }
+  const onSignUpClick = (e) => {
+    e.preventDefault();
+    if (!firstName || !lastName || !email || !idEmployee || !phoneNumber || !username || !password) {
+      setErrorText("Have missing data!");
+      return;
+    }
+    setErrorText("");
+  };
 
-        try {
-            const data = {
-                firstName,
-                lastName,
-                email,
-                username,
-                shoppingCart:[],
-                password
-            };
-            const res = await callAPI("/auth/local/register", "POST", data);
-            setToken(res.data.jwt);
-            setUser(res.data.user);
-            router.replace("/");
-        } catch (error) {
-            if (error.response && error.response.data && error.response.data.message) {
-                setErrorText(error.response.data.message[0].messages[0].message);
-            } else {
-                setErrorText("Error in creating account!");
-            }
-            console.log(error);
-        }
-    };
+  const navigateToLogin = () => {
+    router.push("/login");
+  };
 
-    const navigateToLogin = () => {
-        router.push('/login');
-    };
-
-    return (
-        <div className="flex min-h-screen items-center justify-center px-6 py-12 lg:px-8 bg-[#fff9e6]">
-            <div className="flex flex-col lg:flex-row w-full max-w-5xl bg-[#fff9e6] rounded-lg overflow-hidden" style={{ height: 'calc(100% + 100px)' }}>
-                <div className="lg:w-1/2 flex flex-col items-center justify-center p-8 bg-[#fff9e6]">
-                <img src="https://s3-alpha-sig.figma.com/img/860d/0dbe/6833eff95c9d3e9e22f2abe5933e0ec7?Expires=1719187200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=eAMKbGKnY9Zty2F6LqCqAvMTTapIOH-JDMf7FNcQBTwxOS3nFTaOsi81ancHlfUlnzspBG6ZnCDsDKhCJB7-UzxOhCD2E5t9GWDBXRJqhVHUMSMqSsAt-inPHB6CVZa6Vbp5isOoJUtJ1GFik4gFCuXLtutOlUIVarF8zExt1JMUxfEieZM16fgaR90dEvoCKIdesR3PjRJHcCyXR6NF~RU4OCprFo42zoB7lQGbJVGX8kK1wcNegBqxHG0ga12hUgytz--Zy8rJ3Hr0L3ke4vkciOTtJDNiNadjefhGfChJZ45i6CBNXVx0s1w8A2YOZfA1w2ESgDUgFneuOOngOg__" width="100%" height="auto" />
-                <h1 className="mt-6 text-5xl font-bold" style={{ color: '#015109', marginTop: 80 }}>SIGN UP</h1>
-                </div>
-
-                <div className="lg:w-1/2 p-10 bg-[#fff9e6]" style={{ width: 'calc(50% + 50px)' }}>
-                    <form className="space-y-6">
-                        <div>
-                            <p style={{color: '#015109', marginBottom: 3}}>First name</p>
-                            <input
-                                id="first-name"
-                                name="firstName"
-                                type="text"
-                                placeholder="Enter your First name"
-                                value={firstName}
-                                onChange={(e) => { setFirstName(e.target.value); setErrorText(""); }}
-                                required
-                                className="block w-full bg-[#D7F8DA] rounded-md border border-[#3C8744] px-3 py-2 text-[#3C8744]
-                                           focus:outline-[#5CA664] placeholder:text-[#5CA664] font-sm "
-                                style={{ fontSize: '14px', borderRadius: '10px', WebkitBoxShadow: '0 0 0px 1000px #D7F8DA inset' }}
-                            />
-                        </div>
-
-                        <div>
-                            <p style={{color: '#015109', marginBottom: 3}}>Last name</p>
-                            <input
-                                id="last-name"
-                                name="lastName"
-                                type="text"
-                                placeholder="Enter your Last name"
-                                value={lastName}
-                                onChange={(e) => { setLastName(e.target.value); setErrorText(""); }}
-                                required
-                                className="block w-full bg-[#D7F8DA] rounded-md border border-[#3C8744] px-3 py-2 text-[#3C8744]
-                                           focus:outline-[#5CA664] placeholder:text-[#5CA664] font-sm "
-                                style={{ fontSize: '14px', borderRadius: '10px', WebkitBoxShadow: '0 0 0px 1000px #D7F8DA inset' }}
-                            />
-                        </div>
-
-                        <div>
-                            <p style={{color: '#015109', marginBottom: 3}}>Email</p>
-                            <input
-                                id="email"
-                                name="email"
-                                type="email"
-                                placeholder="email@mail.com"
-                                value={email}
-                                onChange={(e) => { setEmail(e.target.value); setErrorText(""); }}
-                                required
-                                className="block w-full bg-[#D7F8DA] rounded-md border border-[#3C8744] px-3 py-2 text-[#3C8744]
-                                           focus:outline-[#5CA664] placeholder:text-[#5CA664] font-sm "
-                                style={{ fontSize: '14px', borderRadius: '10px', WebkitBoxShadow: '0 0 0px 1000px #D7F8DA inset' }}
-                            />
-                        </div>
-
-                        <div>
-                            <p style={{color: '#015109', marginBottom: 3}}>Username</p>
-                            <input
-                                id="username"
-                                name="username"
-                                type="text"
-                                placeholder="Enter your new Username"
-                                value={username}
-                                onChange={(e) => { setUsername(e.target.value); setErrorText(""); }}
-                                required
-                                className="block w-full bg-[#D7F8DA] rounded-md border border-[#3C8744] px-3 py-2 text-[#3C8744]
-                                           focus:outline-[#5CA664] placeholder:text-[#5CA664] font-sm "
-                                style={{ fontSize: '14px', borderRadius: '10px', WebkitBoxShadow: '0 0 0px 1000px #D7F8DA inset' }}
-                            />
-                        </div>
-
-                        <div>
-                            <p style={{color: '#015109', marginBottom: 3}}>Password</p>
-                            <input
-                                id="password"
-                                name="password"
-                                type="password"
-                                placeholder="Enter your new Password"
-                                value={password}
-                                onChange={(e) => { setPassword(e.target.value); setErrorText(""); }}
-                                required
-                                className="block w-full bg-[#D7F8DA] rounded-md border border-[#3C8744] px-3 py-2 text-[#3C8744]
-                                           focus:outline-[#5CA664] placeholder:text-[#5CA664] font-sm "
-                                style={{ color: '#3C8744', fontSize: '14px', borderRadius: '10px', WebkitBoxShadow: '0 0 0px 1000px #D7F8DA inset' }}
-                            />
-                        </div>
-
-                        <div style={{ minHeight: '24px' }}>
-                            {errorText && <span style={{ color: "red" }}>{errorText}</span>}
-                        </div>
-
-                        <div>
-                            <button
-                                onClick={() => onSignUpClick()}
-                                type="button"
-                                className="flex w-full justify-center rounded-md bg-[#015109] px-4 py-2 text-[#FFF9E2] font-medium hover:bg-[#01630B]"
-                                style={{ boxShadow: 'none', fontSize: '17px', borderRadius: '10px' }}
-                            >
-                                Create account
-                            </button>
-                        </div>
-
-                        <div className="text-center text-sm text-[#015109] mt-4">
-                            Already have an account? <a href="#" className="text-blue-600 hover:underline" onClick={navigateToLogin}>Log In</a>
-                        </div>
-                    </form>
-                </div>
-            </div>
+  return (
+    <div className="flex min-h-screen items-center justify-center px-6 py-12 lg:px-8 bg-[#F5F5F5]">
+      <div className="flex flex-col lg:flex-row w-full max-w-5xl bg-[#F5F5F5] rounded-lg overflow-hidden" style={{ height: "calc(100% + 100px)" }}>
+        <div className="lg:w-1/2 flex flex-col items-center justify-center p-8 bg-[#F5F5F5]">
+          <img src="https://s3-alpha-sig.figma.com/img/860d/0dbe/6833eff95c9d3e9e22f2abe5933e0ec7?Expires=1719187200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=eAMKbGKnY9Zty2F6LqCqAvMTTapIOH-JDMf7FNcQBTwxOS3nFTaOsi81ancHlfUlnzspBG6ZnCDsDKhCJB7-UzxOhCD2E5t9GWDBXRJqhVHUMSMqSsAt-inPHB6CVZa6Vbp5isOoJUtJ1GFik4gFCuXLtutOlUIVarF8zExt1JMUxfEieZM16fgaR90dEvoCKIdesR3PjRJHcCyXR6NF~RU4OCprFo42zoB7lQGbJVGX8kK1wcNegBqxHG0ga12hUgytz--Zy8rJ3Hr0L3ke4vkciOTtJDNiNadjefhGfChJZ45i6CBNXVx0s1w8A2YOZfA1w2ESgDUgFneuOOngOg__"
+            width="100%"
+            height="auto"
+          />
         </div>
-    );
+
+        <div className="lg:w-1/2 p-10 bg-[#F5F5F5]" style={{ width: "calc(50% + 50px)" }}>
+          <form className="space-y-3" onSubmit={onSignUpClick}>
+            <h1 className="text-3xl font-extrabold text-[#458A55] mb-6 text-center">SIGN UP</h1>
+
+            <div className="flex space-x-4 space-y-0">
+              <div className="w-1/2 space-y-0">
+                <label htmlFor="firstName" className="block text-sm font-semibold text-[#458A55]">First name</label>
+                <input
+                  id="firstName"
+                  name="firstName"
+                  type="text"
+                  placeholder="Enter your First name"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  required
+                  className="mt-1 block w-full px-3 py-2 bg-[#D9D9D9] border border-[#458A55] rounded-full text-sm text-[#00000080] focus:outline-none placeholder:italic"
+                />
+              </div>
+              
+              <div className="w-1/2 space-y-0">
+                <label htmlFor="lastName" className="block text-sm font-semibold text-[#458A55]">Last name</label>
+                <input
+                  id="lastName"
+                  name="lastName"
+                  type="text"
+                  placeholder="Enter your Last name"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  required
+                  className="mt-1 block w-full px-3 py-2 bg-[#D9D9D9] border border-[#458A55] rounded-full text-sm text-[#00000080] focus:outline-none placeholder:italic"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-0">
+              <label htmlFor="email" className="block text-sm font-semibold text-[#458A55]">Email</label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                placeholder="Enter your Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="mt-1 block w-full px-3 py-2 bg-[#D9D9D9] border border-[#458A55] rounded-full text-sm text-[#00000080] focus:outline-none placeholder:italic"
+              />
+            </div>
+              
+            <div className="space-y-0">
+              <label htmlFor="idEmployee" className="block text-sm font-semibold text-[#458A55]">ID employee</label>
+              <input
+                id="idEmployee"
+                name="idEmployee"
+                type="text"
+                placeholder="Enter your ID employee"
+                value={idEmployee}
+                onChange={(e) => setIdEmployee(e.target.value)}
+                required
+                className="mt-1 block w-full px-3 py-2 bg-[#D9D9D9] border border-[#458A55] rounded-full text-sm text-[#00000080] focus:outline-none placeholder:italic"
+              />
+            </div>
+            
+            <div className="space-y-0">
+              <label htmlFor="phoneNumber" className="block text-sm font-semibold text-[#458A55]">Phone number</label>
+              <input
+                id="phoneNumber"
+                name="phoneNumber"
+                type="text"
+                placeholder="Enter your Phone number"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                required
+                className="mt-1 block w-full px-3 py-2 bg-[#D9D9D9] border border-[#458A55] rounded-full text-sm text-[#00000080] focus:outline-none placeholder:italic"
+              />
+            </div>
+              
+            <div className="space-y-0">
+              <label htmlFor="username" className="block text-sm font-semibold text-[#458A55]">Username</label>
+              <input
+                id="username"
+                name="username"
+                type="text"
+                placeholder="Enter your Username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+                className="mt-1 block w-full px-3 py-2 bg-[#D9D9D9] border border-[#458A55] rounded-full text-sm text-[#00000080] focus:outline-none placeholder:italic"
+              />
+            </div>
+
+            <div className="space-y-0">
+              <label htmlFor="password" className="block text-sm font-semibold text-[#458A55]">Password</label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                placeholder="Enter your Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="mt-1 block w-full px-3 py-2 bg-[#D9D9D9] border border-[#458A55] rounded-full text-sm text-[#00000080] focus:outline-none placeholder:italic"
+              />
+            </div>
+
+            <div style={{ minHeight: "24px" }}>
+              {errorText && <span style={{ color: "red" }}>{errorText}</span>}
+            </div>
+
+            <div className="text-center">
+              <button
+                type="submit"
+                className="font-medium py-2 px-8 bg-[#458A55] text-white rounded-full text-sm font-semibold hover:bg-[#3c7b4a] transition"
+              >
+                Create Account
+              </button>
+            </div>
+
+            <div className="text-center text-sm text-[#458A55]">
+              Already have an account?{" "}
+              <span className="text-blue-600 hover:underline cursor-pointer" onClick={navigateToLogin}>
+                Log in
+              </span>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default SignUpPage;

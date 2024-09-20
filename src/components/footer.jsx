@@ -52,7 +52,7 @@ const Footer = () => {
         <footer style={{ backgroundColor: '#458A55', padding: '20px', color: '#fff' }}>
       <div className="footer-content" style={{display:'flex'}}>
         <div style={{marginLeft:'50px',paddingLeft:'50px', marginTop:'10px',width:'20vw'}}>
-        <h2 style={{ fontWeight:'bolder', fontSize: '30px' }}>Sign-Check</h2>
+        <h1 className="font-extrabold" style={{ fontSize: '30px' }}>Sign-Check</h1>
         </div>
         <div style={{ marginLeft:'50px',lineHeight:'30px',marginRight:'50px', marginTop:'20px'}}>
         <p style={{ marginTop: '5px', fontSize: '16px' }}>
