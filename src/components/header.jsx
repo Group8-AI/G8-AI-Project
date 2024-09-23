@@ -24,8 +24,10 @@ const Header = () => {
         </a>
       </nav>
       <div style={styles.loginButtonWrapper}>
+
         {shouldShowLoginButton && (
-          <button style={styles.loginButton}>Log in</button>
+          <button style={styles.loginButton}>
+            <a href="/login"> Log in</a></button>
         )}
       </div>
     </header>
