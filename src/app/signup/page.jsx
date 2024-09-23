@@ -36,7 +36,7 @@ const SignUpPage = () => {
         <Image src={img2} height="auto"/>
         </div>
 
-        <div className="lg:w-1/2 p-10 bg-[#F5F5F5] ml-10" style={{ width: "calc(50% + 50px)" }}>
+        <div className="lg:w-1/2 p-10 bg-[#F5F5F5]" style={{ width: "calc(50% + 50px)" }}>
           <form className="space-y-3" onSubmit={onSignUpClick}>
             <h1 className="text-3xl font-extrabold text-[#458A55] mb-6 text-center">SIGN UP</h1>
 
