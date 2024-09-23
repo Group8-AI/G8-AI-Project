@@ -1,6 +1,8 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import img2 from "@/img/Layer_2.png";
+import Image from 'next/image';
 
 const SignUpPage = () => {
   const [firstName, setFirstName] = useState("");
@@ -26,17 +28,15 @@ const SignUpPage = () => {
     router.push("/login");
   };
 
+  console.log(img2)
   return (
     <div className="flex min-h-screen items-center justify-center px-6 py-12 lg:px-8 bg-[#F5F5F5]">
       <div className="flex flex-col lg:flex-row w-full max-w-5xl bg-[#F5F5F5] rounded-lg overflow-hidden" style={{ height: "calc(100% + 100px)" }}>
-        <div className="lg:w-1/2 flex flex-col items-center justify-center p-8 bg-[#F5F5F5]">
-          <img src="https://s3-alpha-sig.figma.com/img/860d/0dbe/6833eff95c9d3e9e22f2abe5933e0ec7?Expires=1719187200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=eAMKbGKnY9Zty2F6LqCqAvMTTapIOH-JDMf7FNcQBTwxOS3nFTaOsi81ancHlfUlnzspBG6ZnCDsDKhCJB7-UzxOhCD2E5t9GWDBXRJqhVHUMSMqSsAt-inPHB6CVZa6Vbp5isOoJUtJ1GFik4gFCuXLtutOlUIVarF8zExt1JMUxfEieZM16fgaR90dEvoCKIdesR3PjRJHcCyXR6NF~RU4OCprFo42zoB7lQGbJVGX8kK1wcNegBqxHG0ga12hUgytz--Zy8rJ3Hr0L3ke4vkciOTtJDNiNadjefhGfChJZ45i6CBNXVx0s1w8A2YOZfA1w2ESgDUgFneuOOngOg__"
-            width="100%"
-            height="auto"
-          />
+        <div className="lg:w-1/2 flex flex-col items-center justify-center p-8 bg-[#F5F5F5] mr-10">
+        <Image src={img2} height="auto"/>
         </div>
 
-        <div className="lg:w-1/2 p-10 bg-[#F5F5F5]" style={{ width: "calc(50% + 50px)" }}>
+        <div className="lg:w-1/2 p-10 bg-[#F5F5F5] ml-10" style={{ width: "calc(50% + 50px)" }}>
           <form className="space-y-3" onSubmit={onSignUpClick}>
             <h1 className="text-3xl font-extrabold text-[#458A55] mb-6 text-center">SIGN UP</h1>
 
