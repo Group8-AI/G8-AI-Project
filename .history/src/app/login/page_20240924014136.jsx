@@ -24,10 +24,6 @@ const LoginPage = () => {
     router.push("/signup"); // Chuyển đến trang đăng ký
   };
 
-  const navigateToForgotPassword = () => {
-    router.push("/forgot-password"); // Chuyển đến trang quên mật khẩu
-  };
-
   return (
     <div className="flex min-h-screen items-center justify-center px-6 py-12 lg:px-8 bg-[#F5F5F5]">
       <div className="flex flex-col lg:flex-row w-full max-w-5xl bg-[#F5F5F5] rounded-lg overflow-hidden" style={{ height: "calc(100% + 100px)" }}>
@@ -67,11 +63,8 @@ const LoginPage = () => {
               />
             </div>
 
-            <div className="text-right" style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <div>
-                {errorText && <span style={{ color: "red" }}>{errorText}</span>}
-              </div>
-              <a href="#" onClick={navigateToForgotPassword} className="text-sm text-blue-600 hover:underline italic">Forgot Password?</a>
+            <div style={{ minHeight: "30px" }}>
+              {errorText && <span style={{ color: "red" }}>{errorText}</span>}
             </div>
 
             <div className="text-center">
