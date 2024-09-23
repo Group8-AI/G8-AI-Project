@@ -1,13 +1,13 @@
 "use client";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
-import Layer1 from '@/img/Layer_1.png'
+import img1 from "@/img/Layer_1.png";
 import { getUser, isLogined } from "@/utils/helper";
 import ProductComponent from "@/components/product-component";
 import { callAPI } from "@/utils/api-caller";
 import { useEffect, useState } from "react";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
-
+import Image from 'next/image';
 const pageSize = 9;  // Set page size to 9
 
 const ProductsPage = () => {
@@ -28,15 +28,16 @@ const ProductsPage = () => {
   //   console.log(getUser())
   // }, [pathname, searchParams]);
 
-  
+  console.log(img1)
   return (
+    <>
     <div className=" text-[#015109]">
       <Header />
       
       <div className="container mx-auto mt-10" style={{padding:'100px', display:'flex'}}>
         <div className="left">
           <div className="img">
-          <img src={Layer1} width="100%" height="auto" alt="Layer 1" />
+            <Image src={img1} width="100%" height="auto" alt="Layer 1" />
           </div>
         </div>
         <div className="right">
@@ -57,6 +58,7 @@ const ProductsPage = () => {
       </div>
       <Footer/>
     </div>
+    </>
   );
 };
 
