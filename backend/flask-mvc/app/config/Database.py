@@ -1,9 +1,9 @@
-import mysql.connector
+from pymongo import MongoClient
 
-connection = mysql.connector(
-    host = "localhost",
-    user = "root",
-    password = ""
-)
+# Kết nối đến MongoDB (thay đổi URL nếu cần)
+client = MongoClient('mongodb://localhost:27017/')
 
-cursor = connection.cursor()
+# Lựa chọn database (thay 'my_database' bằng tên database của bạn)
+db = client['signature-verify-web-app']
+
+
