@@ -7,17 +7,30 @@ import Image from 'next/image';
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errorText, setErrorText] = useState("");
+  const [errorText, setErrorText] = useState(false);
   const router = useRouter();
 
-  const onLoginClick = (e) => {
-    e.preventDefault();
-    if (!email || !password) {
-      setErrorText("Have missing data!");
-      return;
+  const hanldeLogin = async (email, password) => {
+    try {
+      const response = await callAPI("/login", "POST", null, { email: email, password: password });
+      
+      if (response.ok) {
+        const data = response.json();
+        console.log('Đăng nhập thành công:', data);
+        const token = data.token;
+        localStorage.setItem('token', token);
+        const user = data.token;
+        console.log(user);
+        Cookies.set('user', user, { expires: 1 });
+        router.push("/account"); // Chuyển đến trang đăng ký
+      } else {
+        console.error('Lỗi đăng nhập:', data.message);
+        setErrorText(true);
+      }
+    } catch (error) {
+      console.error('Lỗi khi gửi request:', error);
+      setErrorText(true);
     }
-    setErrorText("");
-    // Thêm logic để xử lý đăng nhập ở đây
   };
 
   const navigateToSignUp = () => {
@@ -36,7 +49,7 @@ const LoginPage = () => {
         </div>
 
         <div className="lg:w-1/2 p-10 bg-[#F5F5F5]" style={{ width: "calc(50% + 50px)" }}>
-          <form className="space-y-3" onSubmit={onLoginClick}>
+          <form className="space-y-3">
             <h1 className="text-3xl font-extrabold text-[#458A55] mb-6 text-center">LOG IN</h1>
 
             <div className="space-y-0">
@@ -78,6 +91,10 @@ const LoginPage = () => {
               <button
                 type="submit"
                 className="font-medium py-2 px-8 bg-[#458A55] text-white rounded-full text-sm font-semibold hover:bg-[#3c7b4a] transition"
+                onClick={(e) => {
+                  e.preventDefault(); 
+                  hanldeLogin(email, password); // Gọi hàm khi người dùng nhấn nút
+                }}
               >
                 Sign in
               </button>
