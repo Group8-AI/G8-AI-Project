@@ -4,6 +4,9 @@ import { useRouter } from "next/navigation";
 import img2 from "@/img/Layer_2.png";
 import Image from 'next/image';
 
+import { callAPI } from '@/utils/api-caller';
+
+
 const SignUpPage = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -15,20 +18,40 @@ const SignUpPage = () => {
   const [errorText, setErrorText] = useState("");
   const router = useRouter();
 
+  const handleSignUp = async (name, email, idEmployee, phoneNumber, username, password) => {
+    try {
+      const response = await callAPI("/user/signup", "POST", { name: name, email: email, idEmployee: idEmployee, phoneNumber: phoneNumber, username: username, password: password });
+      
+      if (response) {
+        
+        console.log('Đăng kí thành công:');
+        navigateToLogin()
+      } else {
+        console.error('Lỗi đăng kí:', data.message);
+        setErrorText(true);
+      }
+    } catch (error) {
+      console.error('Lỗi khi gửi request:', error);
+      setErrorText(true);
+    }
+  };
+
   const onSignUpClick = (e) => {
     e.preventDefault();
     if (!firstName || !lastName || !email || !idEmployee || !phoneNumber || !username || !password) {
+
+
       setErrorText("Have missing data!");
+
       return;
     }
     setErrorText("");
+    handleSignUp(firstName + " " + lastName, email, idEmployee, phoneNumber, username, password);
   };
 
   const navigateToLogin = () => {
     router.push("/login");
   };
-
-  console.log(img2)
   return (
     <div className="flex min-h-screen items-center justify-center px-6 py-12 lg:px-8 bg-[#F5F5F5]">
       <div className="flex flex-col lg:flex-row w-full max-w-5xl bg-[#F5F5F5] rounded-lg overflow-hidden" style={{ height: "calc(100% + 100px)" }}>

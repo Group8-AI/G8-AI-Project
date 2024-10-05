@@ -12,9 +12,9 @@ const LoginPage = () => {
 
   const hanldeLogin = async (email, password) => {
     try {
-      const response = await callAPI("/login", "POST", null, { email: email, password: password });
+      const response = await callAPI("/login", "POST", { email: email, password: password });
       
-      if (response.ok) {
+      if (response) {
         const data = response.json();
         console.log('Đăng nhập thành công:', data);
         const token = data.token;
