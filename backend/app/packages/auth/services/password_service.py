@@ -8,7 +8,7 @@ class PasswordService(AuthService):
     def __init__(self):
         super().__init__(model=PasswordModel())
     def authenticate(self, data):
-        user = self.model.get_by_email(email=data["email"])
+        user = self.model.get_by_username(username=data["identifier"])
         if not user:
             raise Exception('Email không tồn tại')
         # Kiểm tra mật khẩu

@@ -21,5 +21,11 @@ class StaffModel(BaseModel):
             user["_id"] = str(user["_id"])
             return user
         return None
+    def get_by_username(self, username): 
+        user = super().find_one({"username": username})
+        if user:
+            user["_id"] = str(user["_id"])
+            return user
+        return None
     def update(self, query, data):
         return super().update(query, data)
