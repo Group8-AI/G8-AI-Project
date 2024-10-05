@@ -1,8 +1,9 @@
 from pymongo.errors import DuplicateKeyError
 from app.models.base_model import *
-class UserModel(BaseModel):
+from app.config.Database import db
+class CustomerModel(BaseModel):
     def __init__(self, mongo):
-        super().__init__(collection_name='users', mongo=mongo)
+        super().__init__(collection_name='customer', mongo=db)
     def create(self, data):
         try:
             if super().find_one({"email": data['email']}):

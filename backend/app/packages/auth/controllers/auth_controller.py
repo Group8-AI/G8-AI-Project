@@ -41,13 +41,10 @@ def isExistEmail():
 @app.route('/api/login', methods=['POST'])
 def login():
     data = request.json  # Fixed request.json()
-    from .face_controller import face_controller
     from .password_controller import password_controller
     if data:
         if 'password' in data:
             return password_controller.login(data)
-        elif 'image' in data:
-            return face_controller.login(data)
     else:
         return jsonify({"error": "Missing authentication method"}), 400
 

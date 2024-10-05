@@ -1,6 +1,6 @@
 
 from flask import request, jsonify
-from ..services.user_service import UserService
+from ..services.customer_service import UserService
 from app.controllers.base_controller import BaseController
 from app import app
 class UserController(BaseController): 
