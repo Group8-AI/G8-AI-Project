@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import img2 from "@/img/Layer_2.png";
 import { callAPI } from "@/utils/api-caller";
+import { setToken, setUser } from "@/utils/helper";
 import Image from 'next/image';
 
 
@@ -22,13 +23,11 @@ const LoginPage = () => {
       const res = await callAPI("/login", "POST", data);
       console.log(res.data);
       
-      if (res.data.jwt) {
-        const token = res.data.jwt;
-        localStorage.setItem('token', token);
-        // const userRes = await callAPI("/users/me", "GET");
-        // Thực hiện các thao tác với userRes nếu cần
-        //console.log(userRes.data);
-        router.push("/account"); // Chuyển đến trang chính sau khi đăng nhập thành công
+      if (res.data.token) {
+        const token = res.data.token;
+        setToken(token[1]);
+        setUser(token[0]);
+        router.replace("/account"); // Chuyển đến trang chính sau khi đăng nhập thành công
       } else {
         setErrorText("Wrong Username or Password!");
       }
