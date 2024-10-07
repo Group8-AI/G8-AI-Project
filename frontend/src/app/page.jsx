@@ -23,7 +23,7 @@ const MainPage = () => {
   }, [router]);
   return (
     <>
-    <div className=" text-[#015109]">
+    <div className=" text-[#015109] bg-[#F5F5F5]">
       <Header />
       
       <div className="container mx-auto mt-10" style={{paddingTop:'100px', display:'flex',paddingBottom:'100px'}}>
