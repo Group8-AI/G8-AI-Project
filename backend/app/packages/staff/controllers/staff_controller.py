@@ -1,6 +1,10 @@
-from flask import request, jsonify
+import os
+from flask import request, jsonify,session,redirect,url_for
 from app.controllers.base_controller import BaseController
+from app.packages.auth.controllers.password_controller import password_controller
 from ..services.staff_service import StaffService
+from werkzeug.utils import secure_filename
+from app.packages.customer.models.customer_model import CustomerModel
 
 from app import app
 
@@ -22,3 +26,13 @@ def create_user():
 
     result = user_controller.create(data)
     return result
+@app.route('/api/logout', methods=['POST'])
+def logout():
+    data = request.json  # Nhận dữ liệu JSON từ yêu cầu
+    if data:
+        if 'token' in data:  # Kiểm tra nếu có token trong dữ liệu
+            return password_controller.logout(data)
+        else:
+            return jsonify({"error": "Missing token"}), 400
+    else:
+        return jsonify({"error": "Missing data"}), 400

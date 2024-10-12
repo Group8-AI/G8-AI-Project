@@ -10,21 +10,43 @@ const AddCustomer = () => {
   const [image, setImage] = useState(null); // Trường tải ảnh
   const [errorText, setErrorText] = useState("");
   const router = useRouter();
-
+  const handleAddCustomer = async (firstName, lastName, customerId, phoneNumber, image) => {
+    try {
+      const data = {
+        firstName:firstName,
+        lastName:lastName,
+        customerId:customerId,
+        phoneNumber:phoneNumber,
+        image:image
+      };
+      const response = await callAPI("/api/addcustomer", "POST", data);
+      console.log
+      if (response) {
+        
+        console.log('Thêm khách hàng thành công:');
+        navigateToLogin()
+      } else {
+        console.error('Lỗi thêm khách hàng:', data.message);
+        setErrorText(true);
+      }
+    } catch (error) {
+      console.error('Lỗi khi gửi request:', error);
+      setErrorText(true);
+    }
+  };
   const onAddCustomerClick = (e) => {
     e.preventDefault();
-    if (!firstName || !lastName || !phoneNumber || !customerId || !image) {
-      setErrorText("Please fill out all fields!");
+    if (!firstName || !lastName ||  !customerId || !phoneNumber || !image ) {
+      console.log(data)
+      setErrorText("Have missing data!");
       return;
     }
     setErrorText("");
-
-    // Logic xử lý thêm khách hàng
-    // Bạn có thể thêm mã gọi API để lưu khách hàng ở đây...
-
-    router.push("/confirm");
+    handleAddCustomer(firstName + " " + lastName,customerId, phoneNumber,image);
+    console.log
   };
 
+    
   const navigateToCustomerList = () => {
     router.push("/customers");
   };

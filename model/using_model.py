@@ -8,7 +8,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 import os
 
 ## tải đưa đúng đường dẫn
-vgg_model = tf.keras.models.load_model('saved_models/vgg16_finetuned_model.h5')
+vgg_model = tf.keras.models.load_model('vgg16_finetuned_model_1.h5')
 feature_extractor = tf.keras.Sequential(vgg_model.layers[:-1])
 
 
@@ -32,8 +32,8 @@ def cosine_similarity_fn(feature_src, feature_input):
        
     return score
 
-image1 = load_image ('./01_068.png')
-image2 = load_image ('./01_0113068.PNG')
+image2 = load_image ('./forgeries_244_02.png')
+image1 = load_image ('./original_244_10.png')
 
 f1 = feature_extractor.predict(image1)
 f2 = feature_extractor.predict(image2)

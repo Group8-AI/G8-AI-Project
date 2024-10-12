@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request, jsonify,session
 from app.packages.auth.services.auth_service import *
 from ..services.auth_service import AuthService
 from app.controllers.base_controller import BaseController
@@ -47,4 +47,10 @@ def login():
             return password_controller.login(data)
     else:
         return jsonify({"error": "Missing authentication method"}), 400
+    
+@app.route('/api/logout', methods=['POST'])
+def logout_user():
+    session.pop('_id', None)  # Xóa user ID từ session
+    return jsonify({"message": "Successfully logged out"}), 200
+
 

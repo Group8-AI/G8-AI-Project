@@ -29,3 +29,4 @@ class StaffModel(BaseModel):
         return None
     def update(self, query, data):
         return super().update(query, data)
+    
