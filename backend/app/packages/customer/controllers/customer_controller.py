@@ -8,8 +8,7 @@ class CustomerController(BaseController):
     def __init__(self, service = CustomerService()): 
         super().__init__(service)
     def create(self, data):
-        self.service.create(data)
-        return jsonify({"message": "Created successfully"}), 201
+        return super().create(data)
     
 customer_controller = CustomerController()
 @app.route('/api/add-customer',methods=['POST'])
@@ -48,5 +47,4 @@ def create_customer():
     }
 
     # Giả sử bạn có một controller để xử lý lưu thông tin
-    print (customer_data)
     return customer_controller.create(customer_data)
