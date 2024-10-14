@@ -1,33 +1,48 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Doughnut, Bar } from 'react-chartjs-2';
 import { Chart, ArcElement, CategoryScale, LinearScale, BarElement } from 'chart.js';
+import { callAPI } from '@/utils/api-caller';
+import { getToken, getUser } from '@/utils/helper';
 
 // Register necessary components
 Chart.register(ArcElement, CategoryScale, LinearScale, BarElement);
 
 const SignCheckDashboard = () => {
-    // Mock data simulating the response from the backend
-    const dashboardData = {
-        totalSignaturesVerified: 150,
-        signatureStats: {
-            forged: 40,
-            original: 110,
-        },
-        topCustomers: [
-            { name: 'Customer A', forgedSignatures: 10 },
-            { name: 'Customer B', forgedSignatures: 15 },
-            { name: 'Customer C', forgedSignatures: 5 },
-            { name: 'Customer D', forgedSignatures: 8 },
-            { name: 'Customer E', forgedSignatures: 12 },
-            { name: 'Customer F', forgedSignatures: 6 },
-            { name: 'Customer G', forgedSignatures: 3 },
-            { name: 'Customer H', forgedSignatures: 2 },
-            { name: 'Customer I', forgedSignatures: 1 },
-            { name: 'Customer J', forgedSignatures: 7 },
-        ],
+    const [dashboardData, setDashboardData] = useState(null);
+    const [error, setError] = useState("");
+    const router = useRouter();
+
+    // Check if user is admin
+    const user = getUser();
+    useEffect(() => {
+        if (!user || user.role !== 'admin') {
+            // Redirect to login if not admin
+            router.replace('/');
+        } else {
+            fetchDashboardData();
+        }
+    }, [user]);
+
+    const fetchDashboardData = async () => {
+        try {
+            const res = await callAPI('/admin/dashboard', 'GET', null, getToken());
+            setDashboardData(res.data.data);
+        } catch (error) {
+            setError("Failed to load dashboard data.");
+        }
     };
+
+    if (!dashboardData) {
+        return (
+            <div style={{ textAlign: 'center', marginTop: '100px' }}>
+                <h2>Loading...</h2>
+                {error && <p style={{ color: 'red' }}>{error}</p>}
+            </div>
+        );
+    }
 
     const { totalSignaturesVerified, signatureStats, topCustomers } = dashboardData;
 
