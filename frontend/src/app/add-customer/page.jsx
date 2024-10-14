@@ -1,6 +1,8 @@
 "use client"; 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { callAPI } from '@/utils/api-caller';
+import { data } from "autoprefixer";
 
 const AddCustomer = () => {
   const [firstName, setFirstName] = useState("");
@@ -10,6 +12,22 @@ const AddCustomer = () => {
   const [image, setImage] = useState(null); // Trường tải ảnh
   const [errorText, setErrorText] = useState("");
   const router = useRouter();
+  
+  const handleAddCustomer=async(firstName,lastName,phoneNumber,customerId,image) => {
+    try{
+      const response = await callAPI("/api/addcustomer", "POST", {firstName:firstName,lastName:lastName,phoneNumber:phoneNumber,customerId:customerId,image:image});
+      if (response){
+        console.log('Add customer successly');
+        navigateToCustomerList()
+      }else{
+        console.error('Error',data.message);
+        setErrorText(true);
+      }
+    }catch(error){
+      console.error('Error when call server:',error);
+      setErrorText(true)
+    }
+  };
 
   const onAddCustomerClick = (e) => {
     e.preventDefault();
@@ -18,11 +36,7 @@ const AddCustomer = () => {
       return;
     }
     setErrorText("");
-
-    // Logic xử lý thêm khách hàng
-    // Bạn có thể thêm mã gọi API để lưu khách hàng ở đây...
-
-    router.push("/confirm");
+    handleAddCustomer(firstName + "" + lastName,phoneNumber,customerId,image);
   };
 
   const navigateToCustomerList = () => {
