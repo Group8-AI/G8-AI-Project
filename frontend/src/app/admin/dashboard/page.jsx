@@ -17,18 +17,20 @@ const SignCheckDashboard = () => {
 
     // Check if user is admin
     const user = getUser();
+    const token = getToken();
+
     useEffect(() => {
         if (!user || user.role !== 'admin') {
-            // Redirect to login if not admin
             router.replace('/');
         } else {
             fetchDashboardData();
         }
-    }, [user]);
+    }, [user, token]);
+    
 
     const fetchDashboardData = async () => {
         try {
-            const res = await callAPI('/admin/dashboard', 'GET', null, getToken());
+            const res = await callAPI('/api/admin/dashboard', 'GET', null, token);
             setDashboardData(res.data.data);
         } catch (error) {
             setError("Failed to load dashboard data.");
@@ -44,13 +46,13 @@ const SignCheckDashboard = () => {
         );
     }
 
-    const { totalSignaturesVerified, signatureStats, topCustomers } = dashboardData;
+    const { totalSignaturesVerified, signatureStats, topCustomers } = dashboardData || { signatureStats: {}, topCustomers: [] };
 
     const doughnutData = {
         labels: ['Forged Signature', 'Original Signature'],
         datasets: [
             {
-                data: [signatureStats.forged, signatureStats.original],
+                data: [signatureStats.forged || 0, signatureStats.original || 0],
                 backgroundColor: ['#D4A344', '#688A5D'],
                 hoverBackgroundColor: ['#D4A344', '#688A5D'],
             },
@@ -88,7 +90,9 @@ const SignCheckDashboard = () => {
             </h1>
 
             <h2 style={{ textAlign: 'center', color: '#688A5D', marginBottom: '20px' }}>Numbers of signatures verified</h2>
-            <h3 style={{ textAlign: 'center', fontSize: '48px', color: '#688A5D', marginBottom: '50px' }}>{totalSignaturesVerified}</h3>
+            <h3 style={{ textAlign: 'center', fontSize: '48px', color: '#688A5D', marginBottom: '50px' }}>
+                {totalSignaturesVerified || 0}
+            </h3>
 
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
                 <div style={{ flex: 1, marginRight: '20px', textAlign: 'center' }}>

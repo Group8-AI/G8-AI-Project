@@ -31,10 +31,10 @@ const Header = ({  }) => {
         </a>
       </div>
       <nav style={styles.nav}>
-        <a href="/" style={isActive('/admin/dashboard') ? styles.activeNavLink : styles.navLink}>
+        <a href="/admin/dashboard" style={isActive('/admin/dashboard') ? styles.activeNavLink : styles.navLink}>
           Dashboard
         </a>
-        <a href="/about" style={isActive('/admin/database') ? styles.activeNavLink : styles.navLink}>
+        <a href="/admin/database" style={isActive('/admin/database') ? styles.activeNavLink : styles.navLink}>
           Database
         </a>
       </nav>
