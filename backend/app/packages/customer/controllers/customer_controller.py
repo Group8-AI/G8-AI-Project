@@ -2,6 +2,7 @@ import os
 from flask import request, jsonify
 from ..services.customer_service import CustomerService
 from app.controllers.base_controller import BaseController
+from flask_login import login_required
 from app import app
 import jwt
 
@@ -40,6 +41,7 @@ class CustomerController(BaseController):
 customer_controller = CustomerController()
 
 @app.route('/api/add-customer', methods=['POST'])
+@login_required 
 def create_customer():
     if 'name' not in request.form or 'phoneNumber' not in request.form or 'customerId' not in request.form or 'image' not in request.files:
         return jsonify({"error": "Missing required fields"}), 400
@@ -75,6 +77,7 @@ def create_customer():
 
 # Route cho API xóa hoặc thay đổi thông tin khách hàng
 @app.route('/api/admin/customer', methods=['POST'])
+@login_required 
 def update_or_delete_customer():
     data = request.json
     if not data or 'id' not in data:

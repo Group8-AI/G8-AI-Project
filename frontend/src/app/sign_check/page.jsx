@@ -5,11 +5,10 @@ import ImageUploading from 'react-images-uploading';
 
 const SignatureCheck = () => {
     const [images, setImages] = useState(null);
-    const [customerId,setCustomerId]=useState("")
+    const [customerId, setCustomerId] = useState(""); // State for customer ID
     const [result, setResult] = useState(null);
     const [errorText, setErrorText] = useState("");
     const maxNumber = 69;
-   
 
     const onChange = (imageList) => {
         setImages(imageList);
@@ -17,25 +16,41 @@ const SignatureCheck = () => {
 
     const handleSubmit = async () => {
         try {
-            if (images && images.length > 0) {
+            if (images && images.length > 0 && customerId) { // Ensure customerId is entered
                 const formData = new FormData();
-                formData.append('image', images[0].file); // Fix to use `images[0].file` instead of `image`
-                formData.append('customerId', customerId);
+                formData.append('image', images[0].file); // Send the uploaded image
+                formData.append('customerId', customerId); // Include customerId
+
+                // First call to load the signature
+                const loadResponse = await callAPI("/api/load_signature", "POST", formData, null, true);
                 
-                const response = await callAPI("/api/load_signature", "POST", formData, null, true);
-                if (response) {
+                if (loadResponse) {
                     console.log('Load image successfully');
+                    
+                    // Now call /api/verify_signature after loading the signature
+                    const verifyData = { customerId }; // Create a payload for verification
+                    const verifyResponse = await callAPI("/api/verify_signature", "POST", JSON.stringify(verifyData), {
+                        'Content-Type': 'application/json'
+                    });
+
+                    // Check if verification response is successful
+                    if (verifyResponse && verifyResponse.result) {
+                        setResult(verifyResponse.result); // Set the result to be displayed
+                    } else {
+                        setErrorText("Error: Unable to verify signature.");
+                        setResult(null);
+                    }
                 } else {
-                    console.error('Error', response.message);
-                    setErrorText(true);
+                    console.error('Error loading image', loadResponse.message);
+                    setErrorText('Error loading image.');
                 }
             } else {
-                console.log(error);
-                console.error('No image selected');
+                console.error('No image or customer ID entered');
+                setErrorText('Please select an image and enter a customer ID.');
             }
         } catch (error) {
             console.error('Error when calling server:', error);
-            setErrorText(true);
+            setErrorText('Server error. Please try again later.');
         }
     };
 
@@ -49,7 +64,23 @@ const SignatureCheck = () => {
                 {/* Left Side: Image Uploading */}
                 <div style={{ flex: 1, marginRight: '20px' }}>
                     <div style={{ padding: '20px', borderRadius: '8px', border: '1px solid #c0c0c0', backgroundColor: '#fff', textAlign: 'center' }}>
-                        {images && images.length > 0? (
+                        {/* Customer ID Input */}
+                        <div style={{ marginTop: '20px' }}>
+                            <input
+                                type="text"
+                                placeholder="Enter customer ID"
+                                value={customerId}
+                                onChange={(e) => setCustomerId(e.target.value)}
+                                style={{
+                                    width: '100%',
+                                    padding: '10px',
+                                    borderRadius: '4px',
+                                    border: '1px solid #c0c0c0',
+                                    fontSize: '16px',
+                                    marginBottom: '20px'
+                                }}
+                            />
+                        {images && images.length > 0 ? (
                             <img src={images[0].data_url} alt="" style={{ borderRadius: '8px', width: '100%', maxWidth: '300px', marginBottom: '20px' }} />
                         ) : (
                             <div style={{ padding: '40px', border: '1px dashed #c0c0c0', borderRadius: '8px', marginBottom: '20px' }}>
@@ -69,14 +100,13 @@ const SignatureCheck = () => {
                                 isDragging,
                                 dragProps
                             }) => (
-                                <div style={{display: 'flex',justifyContent: 'space-between', margin: '10px auto'}}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', margin: '10px auto' }}>
                                     <button
                                         style={isDragging ? { color: "red" } : null}
                                         onClick={onImageUpload}
                                         {...dragProps}
                                         className="upload-button"
                                         style={{
-                                            
                                             margin: '10px auto',
                                             padding: '10px 20px',
                                             backgroundColor: '#458A55',
@@ -88,53 +118,56 @@ const SignatureCheck = () => {
                                     >
                                         Upload
                                     </button>
-                                        <button
-                                            onClick={handleSubmit}
-                                            style={{
-                                                margin: '10px auto',
+                                    <button
+                                        onClick={handleSubmit}
+                                        style={{
+                                            margin: '10px auto',
                                             padding: '10px 20px',
                                             backgroundColor: '#458A55',
                                             color: '#fff',
                                             border: 'none',
                                             borderRadius: '20px',
                                             cursor: 'pointer',
-                                            }}
-                                        >
-                                            Submit
-                                        </button>
-                                        <button
-                                            onClick={onImageRemoveAll}
-                                            style={{
-                                                margin: '10px auto',
+                                        }}
+                                    >
+                                        Submit
+                                    </button>
+                                    <button
+                                        onClick={onImageRemoveAll}
+                                        style={{
+                                            margin: '10px auto',
                                             padding: '10px 20px',
                                             backgroundColor: '#458A55',
                                             color: '#fff',
                                             border: 'none',
                                             borderRadius: '20px',
                                             cursor: 'pointer',
-                                            }}
-                                        >
-                                            Remove all images
-                                        </button>
-                                    
+                                        }}
+                                    >
+                                        Remove all images
+                                    </button>
                                 </div>
                             )}
                         </ImageUploading>
+                        
+                        </div>
                     </div>
                 </div>
 
-                {/* Right Side: Result */}
+                {/* Right Side: Result and Customer ID Input */}
                 <div style={{ flex: 1, paddingLeft: '20px' }}>
                     <div style={{ padding: '20px', borderRadius: '8px', border: '1px solid #c0c0c0', backgroundColor: '#fff', textAlign: 'center' }}>
                         <h2 style={{ color: '#458A55', fontWeight: 'bold', fontSize: '24px' }}>Result:</h2>
                         <div style={{ padding: '10px', border: '1px solid black', borderRadius: '4px', backgroundColor: '#fff', marginBottom: '20px', minHeight: '100px' }}>
                             {result ? <p>{result}</p> : <p>No result yet.</p>}
                         </div>
+
+                        {/* Customer ID Input */}
+                        
                     </div>
                 </div>
             </div>
         </div>
     );
 };
-
 export default SignatureCheck;

@@ -5,7 +5,7 @@ class ExchangeService(BaseService):
         super().__init__(model, session)
     def create(self, data):
         print(data)
-        response = self.model.create(data)  # Tạo khách hàng mới
+        response = self.model.create(data)  
         print(data)
         return response
     
