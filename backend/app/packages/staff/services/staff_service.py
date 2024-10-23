@@ -2,7 +2,6 @@ from app.config.Hash import Hash
 from app.services.base_service import BaseService
 from ..models.staff_model import StaffModel
 from app.models.base_model import BaseModel
-from app.models.customer_model import CustomerModel  # Model khách hàng
 
 class StaffService(BaseService):
     def __init__(self, model=StaffModel(), session=None):

@@ -4,36 +4,38 @@ import Header from "@/components/header";
 import ImageUploading from 'react-images-uploading';
 
 const SignatureCheck = () => {
-    const [images, setImages] = useState([]);
+    const [images, setImages] = useState(null);
+    const [customerId,setCustomerId]=useState("")
     const [result, setResult] = useState(null);
+    const [errorText, setErrorText] = useState("");
     const maxNumber = 69;
+   
 
     const onChange = (imageList) => {
         setImages(imageList);
     };
 
     const handleSubmit = async () => {
-        if (images.length > 0) {
-            const formData = new FormData();
-            images.forEach((image) => {
-                formData.append('images', image.file);
-            });
-
-            try {
-                const response = await fetch('/api/your-ai-endpoint', { // Đổi thành endpoint thực tế của bạn
-                    method: 'POST',
-                    body: formData,
-                });
-
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
+        try {
+            if (images && images.length > 0) {
+                const formData = new FormData();
+                formData.append('image', images[0].file); // Fix to use `images[0].file` instead of `image`
+                formData.append('customerId', customerId);
+                
+                const response = await callAPI("/api/load_signature", "POST", formData, null, true);
+                if (response) {
+                    console.log('Load image successfully');
+                } else {
+                    console.error('Error', response.message);
+                    setErrorText(true);
                 }
-
-                const data = await response.json();
-                setResult(data.result);
-            } catch (error) {
-                console.error('Error:', error);
+            } else {
+                console.log(error);
+                console.error('No image selected');
             }
+        } catch (error) {
+            console.error('Error when calling server:', error);
+            setErrorText(true);
         }
     };
 
@@ -47,7 +49,7 @@ const SignatureCheck = () => {
                 {/* Left Side: Image Uploading */}
                 <div style={{ flex: 1, marginRight: '20px' }}>
                     <div style={{ padding: '20px', borderRadius: '8px', border: '1px solid #c0c0c0', backgroundColor: '#fff', textAlign: 'center' }}>
-                        {images.length > 0 ? (
+                        {images && images.length > 0? (
                             <img src={images[0].data_url} alt="" style={{ borderRadius: '8px', width: '100%', maxWidth: '300px', marginBottom: '20px' }} />
                         ) : (
                             <div style={{ padding: '40px', border: '1px dashed #c0c0c0', borderRadius: '8px', marginBottom: '20px' }}>
