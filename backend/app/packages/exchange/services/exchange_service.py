@@ -4,8 +4,4 @@ class ExchangeService(BaseService):
     def __init__(self, model = ExchangeModel, session = None):
         super().__init__(model, session)
     def create(self, data):
-        print(data)
-        response = self.model.create(data)  
-        print(data)
-        return response
-    
+        return super().create(data)

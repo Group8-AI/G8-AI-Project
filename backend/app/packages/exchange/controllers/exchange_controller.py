@@ -2,8 +2,6 @@ import os
 from flask import request, jsonify
 from app.controllers.base_controller import BaseController
 from app import app
-import jwt
-from flask_login import login_required
 from app.controllers.base_controller import BaseController
 from ..services.exchange_service import ExchangeService
 from app.utils.signature_processor import SignatureProcessor
@@ -37,7 +35,6 @@ class ExchangeController(BaseController):
 exchange_controller=ExchangeController()
 
 @app.route('/api/load_signature', methods=['POST'])
-@login_required 
 def load_signature():
 
     customer_id = request.form.get('customerId')
@@ -47,7 +44,7 @@ def load_signature():
         return jsonify({"error": "No image uploaded"}), 400
 
     image_filename = f"{customer_id}_{image.filename}"
-    image_path = os.path.join(os.getenv('STORAGE_PATH'), image_filename)
+    image_path = os.path.join(os.getenv('STORAGE_EXCHANGE_PATH'), image_filename)
     
     # Tạo thư mục nếu chưa tồn tại
     os.makedirs(os.path.dirname(image_path), exist_ok=True)
@@ -64,5 +61,4 @@ def load_signature():
 def verify_signature():
     image_path = request.form['image_path']
     customer_id = request.form['customer_id']
-    exchange_controller = ExchangeController()
     return exchange_controller.process_signature(image_path, customer_id)

@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import Header from "@/components/header"; 
 import ImageUploading from 'react-images-uploading';
-
+import { callAPI } from "@/utils/api-caller";
 const SignatureCheck = () => {
     const [images, setImages] = useState(null);
     const [customerId, setCustomerId] = useState(""); // State for customer ID
@@ -10,8 +10,19 @@ const SignatureCheck = () => {
     const [errorText, setErrorText] = useState("");
     const maxNumber = 69;
 
+    const buttonStyle = {
+        margin: '10px auto',
+        padding: '10px 20px',
+        backgroundColor: '#458A55',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '20px',
+        cursor: 'pointer',
+    };
+
     const onChange = (imageList) => {
         setImages(imageList);
+        setErrorText(""); // Clear any previous error message when an image is uploaded
     };
 
     const handleSubmit = async () => {
@@ -22,14 +33,14 @@ const SignatureCheck = () => {
                 formData.append('customerId', customerId); // Include customerId
 
                 // First call to load the signature
-                const loadResponse = await callAPI("/api/load_signature", "POST", formData, null, true);
+                const loadResponse = await callAPI("/load_signature", "POST", formData, null, true);
                 
                 if (loadResponse) {
                     console.log('Load image successfully');
                     
                     // Now call /api/verify_signature after loading the signature
                     const verifyData = { customerId }; // Create a payload for verification
-                    const verifyResponse = await callAPI("/api/verify_signature", "POST", JSON.stringify(verifyData), {
+                    const verifyResponse = await callAPI("/verify_signature", "POST", JSON.stringify(verifyData), {
                         'Content-Type': 'application/json'
                     });
 
@@ -66,7 +77,9 @@ const SignatureCheck = () => {
                     <div style={{ padding: '20px', borderRadius: '8px', border: '1px solid #c0c0c0', backgroundColor: '#fff', textAlign: 'center' }}>
                         {/* Customer ID Input */}
                         <div style={{ marginTop: '20px' }}>
+                            <label htmlFor="customer-id" style={{ display: 'block', marginBottom: '10px', fontWeight: 'bold' }}>Customer ID:</label>
                             <input
+                                id="customer-id"
                                 type="text"
                                 placeholder="Enter customer ID"
                                 value={customerId}
@@ -102,53 +115,33 @@ const SignatureCheck = () => {
                             }) => (
                                 <div style={{ display: 'flex', justifyContent: 'space-between', margin: '10px auto' }}>
                                     <button
-                                        style={isDragging ? { color: "red" } : null}
+                                        style={isDragging ? { ...buttonStyle, color: "red" } : buttonStyle}
                                         onClick={onImageUpload}
                                         {...dragProps}
-                                        className="upload-button"
-                                        style={{
-                                            margin: '10px auto',
-                                            padding: '10px 20px',
-                                            backgroundColor: '#458A55',
-                                            color: '#fff',
-                                            border: 'none',
-                                            borderRadius: '20px',
-                                            cursor: 'pointer',
-                                        }}
                                     >
                                         Upload
                                     </button>
                                     <button
                                         onClick={handleSubmit}
-                                        style={{
-                                            margin: '10px auto',
-                                            padding: '10px 20px',
-                                            backgroundColor: '#458A55',
-                                            color: '#fff',
-                                            border: 'none',
-                                            borderRadius: '20px',
-                                            cursor: 'pointer',
-                                        }}
+                                        style={buttonStyle}
                                     >
                                         Submit
                                     </button>
                                     <button
                                         onClick={onImageRemoveAll}
-                                        style={{
-                                            margin: '10px auto',
-                                            padding: '10px 20px',
-                                            backgroundColor: '#458A55',
-                                            color: '#fff',
-                                            border: 'none',
-                                            borderRadius: '20px',
-                                            cursor: 'pointer',
-                                        }}
+                                        style={buttonStyle}
                                     >
                                         Remove all images
                                     </button>
                                 </div>
                             )}
                         </ImageUploading>
+                        {/* Error message display */}
+                        {errorText && (
+                            <div style={{ color: 'red', marginTop: '10px' }}>
+                                {errorText}
+                            </div>
+                        )}
                         
                         </div>
                     </div>
@@ -161,9 +154,6 @@ const SignatureCheck = () => {
                         <div style={{ padding: '10px', border: '1px solid black', borderRadius: '4px', backgroundColor: '#fff', marginBottom: '20px', minHeight: '100px' }}>
                             {result ? <p>{result}</p> : <p>No result yet.</p>}
                         </div>
-
-                        {/* Customer ID Input */}
-                        
                     </div>
                 </div>
             </div>

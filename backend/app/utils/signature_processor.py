@@ -1,11 +1,10 @@
 import tensorflow as tf
 import numpy as np
 from tensorflow.keras.preprocessing import image
-
 class SignatureProcessor:
     def __init__(self):
         # Load các model
-        self.verification_model = tf.keras.models.load_model('app/model/vgg16_finetuned_model_1 (1).h5')
+        self.verification_model = tf.keras.models.load_model('app/model/vgg16_finetuned_model.h5')
         
 
     def preprocess_image(self, img_path):
