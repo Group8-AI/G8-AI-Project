@@ -37,9 +37,10 @@ const SignatureCheck = () => {
                 
                 if (loadResponse) {
                     console.log('Load image successfully');
+                    const exchangeId = loadResponse.data.id
                     
                     // Now call /api/verify_signature after loading the signature
-                    const verifyData = { customer_id: customerId }; // Create a payload for verification
+                    const verifyData = { customer_id: customerId, exchange_id: exchangeId }; // Create a payload for verification
                     const verifyResponse = await callAPI("/verify_signature", "POST", JSON.stringify(verifyData), {
                         'Content-Type': 'application/json'
                     });
@@ -53,7 +54,7 @@ const SignatureCheck = () => {
                         setResult("NULL");
                         setErrorText("Error: Unable to verify signature.");
                     }
-                    
+                    console.log(result)
                 } else {
                     console.error('Error loading image', loadResponse.message);
                     setErrorText('Error loading image.');

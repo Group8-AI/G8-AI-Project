@@ -8,7 +8,7 @@ class ExchangeModel(BaseModel):
         return db['customer'].find_one({"customerId": id})
     def create(self, data):
         result = super().insert(data)
-        return {"_id": str(result.inserted_id)}, 201
+        return str(result.inserted_id)
     def find_one(self, query):
         return super().find_one(query)
     def update_status(self, id, is_verified, similar):
