@@ -25,4 +25,4 @@ class SignatureProcessor:
         )
         
         # Trả về True nếu similarity > threshold
-        return similarity > 0.85
+        return similarity > 0.85, similarity

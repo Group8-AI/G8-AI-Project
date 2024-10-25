@@ -6,7 +6,7 @@ import { callAPI } from "@/utils/api-caller";
 const SignatureCheck = () => {
     const [images, setImages] = useState(null);
     const [customerId, setCustomerId] = useState(""); // State for customer ID
-    const [result, setResult] = useState(null);
+    const [result, setResult] = useState("NULL");
     const [errorText, setErrorText] = useState("");
     const maxNumber = 69;
 
@@ -39,18 +39,21 @@ const SignatureCheck = () => {
                     console.log('Load image successfully');
                     
                     // Now call /api/verify_signature after loading the signature
-                    const verifyData = { customerId }; // Create a payload for verification
+                    const verifyData = { customer_id: customerId }; // Create a payload for verification
                     const verifyResponse = await callAPI("/verify_signature", "POST", JSON.stringify(verifyData), {
                         'Content-Type': 'application/json'
                     });
-
+                    console.log(verifyResponse.status)
                     // Check if verification response is successful
-                    if (verifyResponse && verifyResponse.result) {
-                        setResult(verifyResponse.result); // Set the result to be displayed
+                    if (verifyResponse.status === 200) {
+                        setResult("TRUE");
+                    } else if (verifyResponse.status === 401) {
+                        setResult("FALSE");
                     } else {
+                        setResult("NULL");
                         setErrorText("Error: Unable to verify signature.");
-                        setResult(null);
                     }
+                    
                 } else {
                     console.error('Error loading image', loadResponse.message);
                     setErrorText('Error loading image.');

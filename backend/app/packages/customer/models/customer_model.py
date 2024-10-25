@@ -11,7 +11,6 @@ class CustomerModel(BaseModel):
             if super().find_one({"phoneNumber": data['phoneNumber']}):
                 return {"error": "User already exist"}, 400
             result = super().insert(data)
-            print(result)
             return {"_id": str(result.inserted_id)}, 201
         except DuplicateKeyError:
             return {"error": "Customer already exists"}, 400
