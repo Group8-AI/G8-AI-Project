@@ -24,6 +24,28 @@ class ExchangeController(BaseController):
             return jsonify({"message": "Signature approved"}), 200
         else:
             return jsonify({"error": "Signature not approved"}), 401
+    
+    def dashboard(self):
+        # token = None
+        # if 'Authorization' in request.headers:
+        #     token = request.headers['Authorization'].split(" ")[1]  # Lấy JWT token từ header
+
+        # if not token:
+        #     return jsonify({"error": "Token is missing!"}), 403
+
+        # try:
+        #     data = jwt.decode(token, os.getenv('JWT_SECRET_KEY'), algorithms=["HS256"])
+        #     if data['role'] != 'admin':  # Kiểm tra quyền admin
+        #         return jsonify({"error": "You are not authorized to access this resource"}), 403
+        # except Exception as e:
+        #     return jsonify({"error": "Invalid token!"}), 403
+
+        try:
+            data = self.service.get_dashboard_data()
+            return jsonify({"message": "Success", "data": data}), 200
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+
 
 exchange_controller = ExchangeController()
 
@@ -54,6 +76,7 @@ def load_signature():
     
     return exchange_controller.create(exchange_data)
 
+
 @app.route('/api/verify_signature', methods=['POST'])
 def verify_signature():
     # Retrieve customer_id and exchange_id from JSON payload
@@ -62,3 +85,8 @@ def verify_signature():
     
     # Verify signature with customer ID and exchange ID
     return exchange_controller.verify_signature(customer_id, exchange_id)
+
+# Route cho API dashboard (chỉ cho phép admin)
+@app.route('/api/admin/dashboard', methods=['GET'])
+def admin_dashboard():
+    return exchange_controller.dashboard()

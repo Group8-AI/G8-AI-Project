@@ -32,3 +32,24 @@ class ExchangeService(BaseService):
 
         self.model.update_status(exchange["_id"], is_verified, similar)        
         return is_verified
+    def get_dashboard_data(self):
+        try:
+            # Lấy tổng số lượng chữ ký thật và giả (dữ liệu mẫu)
+            verified_signatures = self.model.collection.count_documents({"is_verified": True})
+            forged_signatures = self.model.collection.count_documents({"is_verified": False})
+
+            # Lấy khách hàng có chữ ký được xác thực nhiều nhất
+            top_customer = self.model.collection.aggregate([
+                {"$group": {"_id": "$customer_id", "count": {"$sum": 1}}},
+                {"$sort": {"count": -1}},
+                {"$limit": 1}
+            ])
+
+            result = {
+                "verified_signatures": verified_signatures,
+                "forged_signatures": forged_signatures,
+                "top_customer": list(top_customer)  # Chuyển kết quả sang list
+            }
+            return result
+        except Exception as e:
+            raise e

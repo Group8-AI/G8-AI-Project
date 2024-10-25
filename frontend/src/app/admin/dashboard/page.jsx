@@ -15,7 +15,7 @@ const SignCheckDashboard = () => {
     const [error, setError] = useState("");
     const router = useRouter();
 
-    // Check if user is admin
+    // Retrieve user and token
     const user = getUser();
     const token = getToken();
 
@@ -26,12 +26,25 @@ const SignCheckDashboard = () => {
             fetchDashboardData();
         }
     }, [user, token]);
-    
 
     const fetchDashboardData = async () => {
         try {
-            const res = await callAPI('/admin/dashboard', 'GET', null, token);
-            setDashboardData(res.data.data);
+            const res = await callAPI('/admin/dashboard', 'GET');
+            const { data } = res.data;
+
+            // Map API data structure to match front-end expectations
+            const signatureStats = {
+                forged: data.forged_signatures || 0,
+                original: data.verified_signatures || 0,
+            };
+            const topCustomers = data.top_customer || [];
+            const totalSignaturesVerified = signatureStats.forged + signatureStats.original;
+
+            setDashboardData({
+                signatureStats,
+                topCustomers,
+                totalSignaturesVerified
+            });
         } catch (error) {
             setError("Failed to load dashboard data.");
         }
@@ -46,13 +59,13 @@ const SignCheckDashboard = () => {
         );
     }
 
-    const { totalSignaturesVerified, signatureStats, topCustomers } = dashboardData || { signatureStats: {}, topCustomers: [] };
+    const { totalSignaturesVerified, signatureStats, topCustomers } = dashboardData;
 
     const doughnutData = {
         labels: ['Forged Signature', 'Original Signature'],
         datasets: [
             {
-                data: [signatureStats.forged || 0, signatureStats.original || 0],
+                data: [signatureStats.forged, signatureStats.original],
                 backgroundColor: ['#D4A344', '#688A5D'],
                 hoverBackgroundColor: ['#D4A344', '#688A5D'],
             },
@@ -60,11 +73,11 @@ const SignCheckDashboard = () => {
     };
 
     const barData = {
-        labels: topCustomers.map(customer => customer.name),
+        labels: topCustomers.map(customer => customer._id || "Customer"), // Use customer._id or customer.name if available
         datasets: [
             {
                 label: 'Forged Signatures',
-                data: topCustomers.map(customer => customer.forgedSignatures),
+                data: topCustomers.map(customer => customer.count || 0), // Use 'count' as per your backend response
                 backgroundColor: '#688A5D',
                 borderColor: '#688A5D',
                 borderWidth: 1,
