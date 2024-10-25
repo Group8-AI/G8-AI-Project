@@ -41,3 +41,6 @@ class CustomerService(BaseService):
 
         self.model.delete(customer["_id"])
         return {"message": "Customer deleted successfully"}, 200
+
+    def get_all(self):
+        return self.model.get_all()

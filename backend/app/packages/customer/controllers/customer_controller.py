@@ -36,6 +36,9 @@ class CustomerController(BaseController):
             result = self.service.update_customer(data)
 
         return jsonify(result)
+    def get_customer(self):
+        documents = self.service.get_all()
+        return jsonify(documents), 200
 
 customer_controller = CustomerController()
 
@@ -80,3 +83,6 @@ def update_or_delete_customer():
     if not data or 'id' not in data:
         return jsonify({"error": "Missing customer ID"}), 400
     return customer_controller.update_or_delete_customer(data)
+@app.route('/api/admin/customers', methods=['GET'])
+def get_customers():
+    return  customer_controller.get_customer()

@@ -29,8 +29,10 @@ const AdminDatabasePage = () => {
 
   const fetchStaff = async (token) => {
     try {
-      const response = await callAPI("/api/admin/staff", "GET", null, token);
-      const users = response.data.filter((staffMember) => staffMember.role === "user");
+      const response = await callAPI("/admin/staff", "GET");
+      console.log("hihihihihis",response)
+      const users = response.data;
+      console.log(users)
       setStaff(users.map(user => ({ ...user })));
     } catch (error) {
       setError("Failed to load staff.");
@@ -39,7 +41,7 @@ const AdminDatabasePage = () => {
 
   const fetchCustomers = async (token) => {
     try {
-      const response = await callAPI("/api/admin/customers", "GET", null, token);
+      const response = await callAPI("/admin/customers", "GET");
       setCustomers(response.data.map(customer => ({ ...customer })));
     } catch (error) {
       setError("Failed to load customers.");
@@ -62,7 +64,7 @@ const AdminDatabasePage = () => {
   const handleSaveClick = async () => {
     const token = getToken();
     try {
-      const url = selectedOption === "user" ? `/api/admin/employee` : `/api/admin/customer`;
+      const url = selectedOption === "user" ? `/admin/employee` : `/admin/customer`;
       await callAPI(url, "POST", editedData, token);
 
       // Update the respective list with the edited data
@@ -84,7 +86,7 @@ const AdminDatabasePage = () => {
 
   const handleDeleteClick = async (id) => {
     const token = getToken();
-    const url = selectedOption === "user" ? `/api/admin/employee` : `/api/admin/customer`;
+    const url = selectedOption === "user" ? `/admin/employee` : `/admin/customer`;
     await callAPI(url, "POST", { id, action: "delete" }, token);
 
     if (selectedOption === "user") {
@@ -132,11 +134,9 @@ const AdminDatabasePage = () => {
           <thead>
             <tr style={{ backgroundColor: "#458A55", color: "#fff" }}>
               <th style={{ padding: "10px", border: "2px solid #E49F15" }}>ID Employee</th>
-              <th style={{ padding: "10px", border: "2px solid #E49F15" }}>First Name</th>
-              <th style={{ padding: "10px", border: "2px solid #E49F15" }}>Last Name</th>
+              <th style={{ padding: "10px", border: "2px solid #E49F15" }}> Name</th>
               <th style={{ padding: "10px", border: "2px solid #E49F15" }}>Email</th>
               <th style={{ padding: "10px", border: "2px solid #E49F15" }}>Phone Number</th>
-              <th style={{ padding: "10px", border: "2px solid #E49F15" }}>Created</th>
               <th style={{ padding: "10px", border: "2px solid #E49F15" }}>Username</th>
               <th style={{ padding: "10px", border: "2px solid #E49F15" }}>Actions</th>
             </tr>
@@ -149,19 +149,13 @@ const AdminDatabasePage = () => {
             ) : (
               staff.map((user, index) => (
                 <tr key={index} style={{ backgroundColor: editingRow === index ? "#D9D9D9" : "transparent" }}>
-                  <td style={{ padding: "10px", border: "2px solid #E49F15" }}>{user.id}</td>
+                  <td style={{ padding: "10px", border: "2px solid #E49F15" }}>{user.idEmployee}</td>
+                  
                   <td style={{ padding: "10px", border: "2px solid #E49F15" }}>
                     {editingRow === index ? (
-                      <input type="text" value={editedData.firstName} onChange={(e) => handleInputChange(e, "firstName")} />
+                      <input type="text" value={editedData.lastName} onChange={(e) => handleInputChange(e, "Name")} />
                     ) : (
-                      user.firstName
-                    )}
-                  </td>
-                  <td style={{ padding: "10px", border: "2px solid #E49F15" }}>
-                    {editingRow === index ? (
-                      <input type="text" value={editedData.lastName} onChange={(e) => handleInputChange(e, "lastName")} />
-                    ) : (
-                      user.lastName
+                      user.name
                     )}
                   </td>
                   <td style={{ padding: "10px", border: "2px solid #E49F15" }}>
@@ -178,7 +172,6 @@ const AdminDatabasePage = () => {
                       user.phoneNumber
                     )}
                   </td>
-                  <td style={{ padding: "10px", border: "2px solid #E49F15" }}>{user.created}</td>
                   <td style={{ padding: "10px", border: "2px solid #E49F15" }}>{user.username}</td>
                   <td style={{ padding: "10px", border: "2px solid #E49F15" }}>
                     {editingRow === index ? (
@@ -201,11 +194,8 @@ const AdminDatabasePage = () => {
           <thead>
             <tr style={{ backgroundColor: "#458A55", color: "#fff" }}>
               <th style={{ padding: "10px", border: "2px solid #E49F15" }}>ID Customer</th>
-              <th style={{ padding: "10px", border: "2px solid #E49F15" }}>First Name</th>
-              <th style={{ padding: "10px", border: "2px solid #E49F15" }}>Last Name</th>
+              <th style={{ padding: "10px", border: "2px solid #E49F15" }}>Name</th>
               <th style={{ padding: "10px", border: "2px solid #E49F15" }}>Phone Number</th>
-              <th style={{ padding: "10px", border: "2px solid #E49F15" }}>Created</th>
-              <th style={{ padding: "10px", border: "2px solid #E49F15" }}>Signature</th>
               <th style={{ padding: "10px", border: "2px solid #E49F15" }}>Actions</th>
             </tr>
           </thead>
@@ -217,19 +207,12 @@ const AdminDatabasePage = () => {
             ) : (
               customers.map((customer, index) => (
                 <tr key={index} style={{ backgroundColor: editingRow === index ? "#D9D9D9" : "transparent" }}>
-                  <td style={{ padding: "10px", border: "2px solid #E49F15" }}>{customer.id}</td>
+                  <td style={{ padding: "10px", border: "2px solid #E49F15" }}>{customer.customerId}</td>
                   <td style={{ padding: "10px", border: "2px solid #E49F15" }}>
                     {editingRow === index ? (
-                      <input type="text" value={editedData.firstName} onChange={(e) => handleInputChange(e, "firstName")} />
+                      <input type="text" value={editedData.lastName} onChange={(e) => handleInputChange(e, "Name")} />
                     ) : (
-                      customer.firstName
-                    )}
-                  </td>
-                  <td style={{ padding: "10px", border: "2px solid #E49F15" }}>
-                    {editingRow === index ? (
-                      <input type="text" value={editedData.lastName} onChange={(e) => handleInputChange(e, "lastName")} />
-                    ) : (
-                      customer.lastName
+                      customer.name
                     )}
                   </td>
                   <td style={{ padding: "10px", border: "2px solid #E49F15" }}>
@@ -239,8 +222,6 @@ const AdminDatabasePage = () => {
                       customer.phoneNumber
                     )}
                   </td>
-                  <td style={{ padding: "10px", border: "2px solid #E49F15" }}>{customer.created}</td>
-                  <td style={{ padding: "10px", border: "2px solid #E49F15" }}>{customer.signature}</td>
                   <td style={{ padding: "10px", border: "2px solid #E49F15" }}>
                     {editingRow === index ? (
                       <button onClick={() => setEditingRow(null)} style={{ backgroundColor: "#458A55", color: "#fff", borderRadius: "5px", padding: "5px 10px", marginRight: "5px" }}>Cancel</button>

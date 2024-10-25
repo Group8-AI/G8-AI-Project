@@ -72,3 +72,5 @@ class StaffService(BaseService):
 
         self.model.delete(employee["_id"])
         return {"message": "Employee deleted successfully"}, 200
+    def get_all(self):
+        return self.model.get_all()

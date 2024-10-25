@@ -30,7 +30,7 @@ const SignCheckDashboard = () => {
 
     const fetchDashboardData = async () => {
         try {
-            const res = await callAPI('/api/admin/dashboard', 'GET', null, token);
+            const res = await callAPI('/admin/dashboard', 'GET', null, token);
             setDashboardData(res.data.data);
         } catch (error) {
             setError("Failed to load dashboard data.");

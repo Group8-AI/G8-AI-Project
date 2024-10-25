@@ -36,3 +36,12 @@ class CustomerModel(BaseModel):
     # Hàm mới để xóa khách hàng
     def delete(self, customer_id):
         return super().delete({"_id": customer_id})
+    def get_all(self):
+         # Retrieve all documents from the collection
+        documents = list(self.collection.find({}))
+        
+        # Convert MongoDB documents to JSON serializable format if needed
+        for doc in documents:
+            doc['_id'] = str(doc['_id'])  # Convert ObjectId to string
+        
+        return documents
