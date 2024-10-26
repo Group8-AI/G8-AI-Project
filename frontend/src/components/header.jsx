@@ -27,7 +27,13 @@ const Header = ({}) => {
     window.location.href = "/"; // Use window.location for navigation
   };
 
-  const isActive = (path) => currentPath === path;
+  // Adjust isActive to make Home bold on both "/" and "/sign_check"
+  const isActive = (path) => {
+    if (path === '/') {
+      return currentPath === '/' || currentPath === '/sign_check'; // Treat both as active for "Home"
+    }
+    return currentPath === path;
+  };
 
   return (
     <header style={styles.header}>
