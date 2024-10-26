@@ -2,6 +2,8 @@
 import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { getUser, clearAuthData } from "@/utils/helper";
+import Image from "next/image";
+import img4 from "@/img/Layer_4.png"; // Import the account image
 
 const Header = ({}) => {
   const currentPath = usePathname(); // Get the current path
@@ -27,7 +29,6 @@ const Header = ({}) => {
 
   const isActive = (path) => currentPath === path;
 
-  
   return (
     <header style={styles.header}>
       <div style={styles.logo}>
@@ -49,20 +50,25 @@ const Header = ({}) => {
         )}
       </nav>
       <div style={styles.loginButtonWrapper}>
+        {isAuthenticated && currentPath !== "/account" && ( // Show account icon and logout button when authenticated and not on /account
+          <>
+            <a href="/account" style={styles.accountIcon}>
+              <Image src={img4} width={32} height={32} layout="intrinsic" alt="Account" style={styles.accountImage} />
+            </a>
+            <button style={styles.loginButton} onClick={handleLogout}>
+              Log out
+            </button>
+          </>
+        )}
         {shouldShowLoginButton && !isAuthenticated && ( // Show log in button only when not authenticated
           <button style={styles.loginButton}>
             <a href="/login">Log in</a>
           </button>
         )}
-        {isAuthenticated && ( // Show log out button when authenticated
-          <button style={styles.loginButton} onClick={handleLogout}>
-            Log out
-          </button>
-        )}
       </div>
     </header>
   );
-};  
+};
 
 const styles = {
   header: {
@@ -108,6 +114,13 @@ const styles = {
     display: "flex",
     alignItems: "center", // Center the login/logout button vertically
     paddingRight: "20px", // Adjusted padding
+  },
+  accountIcon: {
+    marginRight: "10px", // Space between account icon and log out button
+  },
+  accountImage: {
+    borderRadius: "50%", // Circular shape
+    cursor: "pointer",
   },
   loginButton: {
     border: "2px solid #5A7F58",
