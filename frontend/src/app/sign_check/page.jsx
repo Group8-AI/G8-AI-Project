@@ -1,14 +1,26 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Header from "@/components/header"; 
 import ImageUploading from 'react-images-uploading';
 import { callAPI } from "@/utils/api-caller";
+import { getUser } from '@/utils/helper';
+
 const SignatureCheck = () => {
     const [images, setImages] = useState(null);
     const [customerId, setCustomerId] = useState(""); // State for customer ID
     const [result, setResult] = useState("NULL");
     const [errorText, setErrorText] = useState("");
     const maxNumber = 69;
+    const router = useRouter();
+
+    useEffect(() => {
+        const userData = getUser();
+        if (!userData) {
+            // Redirect to login page if user is not authenticated
+            router.push('/login');
+        }
+    }, [router]);
 
     const buttonStyle = {
         margin: '10px auto',
@@ -37,14 +49,14 @@ const SignatureCheck = () => {
                 
                 if (loadResponse) {
                     console.log('Load image successfully');
-                    const exchangeId = loadResponse.data.id
+                    const exchangeId = loadResponse.data.id;
                     
                     // Now call /api/verify_signature after loading the signature
                     const verifyData = { customer_id: customerId, exchange_id: exchangeId }; // Create a payload for verification
                     const verifyResponse = await callAPI("/verify_signature", "POST", JSON.stringify(verifyData), {
                         'Content-Type': 'application/json'
                     });
-                    console.log(verifyResponse.status)
+                    console.log(verifyResponse.status);
                     // Check if verification response is successful
                     if (verifyResponse.status === 200) {
                         setResult("TRUE");
@@ -54,7 +66,6 @@ const SignatureCheck = () => {
                         setResult("NULL");
                         setErrorText("Error: Unable to verify signature.");
                     }
-                    console.log(result)
                 } else {
                     console.error('Error loading image', loadResponse.message);
                     setErrorText('Error loading image.');
@@ -135,7 +146,7 @@ const SignatureCheck = () => {
                                         onClick={onImageRemoveAll}
                                         style={buttonStyle}
                                     >
-                                        Remove all images
+                                        Remove
                                     </button>
                                 </div>
                             )}
@@ -164,4 +175,5 @@ const SignatureCheck = () => {
         </div>
     );
 };
+
 export default SignatureCheck;
