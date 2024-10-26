@@ -49,7 +49,7 @@ const AddCustomer = () => {
   };
 
   const navigateToCustomerList = () => {
-    router.push("/customers");
+    router.push("/confirm");
   };
 
   const handleImageChange = (e) => {
@@ -146,12 +146,6 @@ const AddCustomer = () => {
               >
                 Add Customer
               </button>
-            </div>
-
-            <div className="text-center text-sm text-[#458A55]">
-              <span className="text-blue-600 hover:underline cursor-pointer" onClick={navigateToCustomerList}>
-                View Customer List
-              </span>
             </div>
           </form>
         </div>
