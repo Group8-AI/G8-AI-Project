@@ -17,13 +17,30 @@ class ExchangeController(BaseController):
         else:
             return jsonify({"error": "Could not create exchange"}), 500
 
+    # def verify_signature(self, customer_id, exchange_id):
+    #     # Process signature verification with provided customer_id and exchange_id
+    #     res = self.service.process(customer_id, exchange_id)
+    #     if res:
+    #         return jsonify({"message": "Signature approved"}), 200
+    #     else:
+    #         return jsonify({"error": "Signature not approved"}), 401
     def verify_signature(self, customer_id, exchange_id):
-        # Process signature verification with provided customer_id and exchange_id
+    # Xử lý xác minh chữ ký với customer_id và exchange_id đã cung cấp
         res = self.service.process(customer_id, exchange_id)
+        print(res)  # In ra để kiểm tra giá trị trả về
+
+        
+
         if res:
-            return jsonify({"message": "Signature approved"}), 200
+            return jsonify({
+                "message": "Chữ ký đã được phê duyệt",
+                "is_verified": res['is_verified'],  # Bao gồm is_verified trong phản hồi
+                "similar": res['similar'],          # Bao gồm similar nếu cần
+                "exchange_id": res['exchange_id']   # Bao gồm exchange_id nếu cần
+            }), 200
         else:
-            return jsonify({"error": "Signature not approved"}), 401
+            return jsonify({"error": "Chữ ký không được phê duyệt"}), 401
+
     
     def dashboard(self):
         # token = None
@@ -85,6 +102,7 @@ def verify_signature():
     
     # Verify signature with customer ID and exchange ID
     return exchange_controller.verify_signature(customer_id, exchange_id)
+
 
 # Route cho API dashboard (chỉ cho phép admin)
 @app.route('/api/admin/dashboard', methods=['GET'])

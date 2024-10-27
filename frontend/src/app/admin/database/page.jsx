@@ -30,23 +30,21 @@ const AdminDatabasePage = () => {
   const fetchStaff = async (token) => {
     try {
       const response = await callAPI("/admin/staff", "GET");
-      console.log("hihihihihis",response)
-      const users = response.data;
-      console.log(users)
-      setStaff(users.map(user => ({ ...user })));
+      setStaff(response?.data || []); // Đảm bảo `data` tồn tại hoặc là mảng rỗng
     } catch (error) {
       setError("Failed to load staff.");
     }
-  };
+};
 
-  const fetchCustomers = async (token) => {
+const fetchCustomers = async (token) => {
     try {
       const response = await callAPI("/admin/customers", "GET");
-      setCustomers(response.data.map(customer => ({ ...customer })));
+      setCustomers(response?.data || []);
     } catch (error) {
       setError("Failed to load customers.");
     }
-  };
+};
+
 
   const handleCheckboxChange = (event) => {
     setSelectedOption(event.target.value);

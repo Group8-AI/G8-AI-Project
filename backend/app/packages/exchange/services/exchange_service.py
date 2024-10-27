@@ -29,9 +29,17 @@ class ExchangeService(BaseService):
         # Verify chữ ký
         is_verified, similar = self.signature_processor.verify_signature(input_img, template_img)
         print("độ giống nhau: ", similar)
+        print("is_verified:", is_verified)
 
         self.model.update_status(exchange["_id"], is_verified, similar)        
-        return is_verified
+        # Trả về các giá trị đã được chuyển đổi
+        similar_value = float(similar)
+        return {
+            "is_verified": bool(is_verified),  # Chuyển đổi bool_ thành bool
+            "similar":similar_value,                 # Giả sử similar đã là kiểu dữ liệu hợp lệ
+            "exchange_id": str(exchange["_id"]) # Trả về exchange_id như một chuỗi
+}
+
     def get_dashboard_data(self):
         try:
             # Lấy tổng số lượng chữ ký thật và giả (dữ liệu mẫu)

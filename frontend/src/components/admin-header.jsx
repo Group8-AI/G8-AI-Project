@@ -48,6 +48,15 @@ const Header = ({}) => {
         >
           Database
         </a>
+        <a
+          href="/admin/sign_check"
+          style={
+            isActive("/admin/sign_check") ? styles.activeNavLink : styles.navLink
+          }
+        >
+          Sign Check
+        </a>
+
       </nav>
       <div style={styles.loginButtonWrapper}>
         {shouldShowLoginButton &&
