@@ -6,10 +6,10 @@ import { callAPI } from '@/utils/api-caller';
 import { getToken, getUser } from '@/utils/helper'; 
 
 const AdminDatabasePage = () => {
-  const [selectedOption, setSelectedOption] = useState("user"); // Mặc định chọn user
+  const [selectedOption, setSelectedOption] = useState("user");
   const [staff, setStaff] = useState([]);
   const [customers, setCustomers] = useState([]);
-  const [editingRow, setEditingRow] = useState(null); // Để theo dõi hàng đang được chỉnh sửa
+  const [editingRow, setEditingRow] = useState(null);
   const [editedData, setEditedData] = useState({});
   const [error, setError] = useState(""); 
   const router = useRouter();
@@ -17,10 +17,9 @@ const AdminDatabasePage = () => {
   const user = getUser();
   const token = getToken();
 
-  // Kiểm tra xem người dùng có quyền admin không
   useEffect(() => {
     if (!user || user.role !== 'admin') {
-      router.replace('/'); // Chuyển hướng nếu không phải admin
+      router.replace('/');
     } else {
       fetchStaff(token);
       fetchCustomers(token);
@@ -30,21 +29,21 @@ const AdminDatabasePage = () => {
   const fetchStaff = async (token) => {
     try {
       const response = await callAPI("/admin/staff", "GET");
-      setStaff(response?.data || []); // Đảm bảo `data` tồn tại hoặc là mảng rỗng
+      const users = response.data;
+      setStaff(users.map(user => ({ ...user })));
     } catch (error) {
       setError("Failed to load staff.");
     }
-};
+  };
 
-const fetchCustomers = async (token) => {
+  const fetchCustomers = async (token) => {
     try {
       const response = await callAPI("/admin/customers", "GET");
-      setCustomers(response?.data || []);
+      setCustomers(response.data.map(customer => ({ ...customer })));
     } catch (error) {
       setError("Failed to load customers.");
     }
-};
-
+  };
 
   const handleCheckboxChange = (event) => {
     setSelectedOption(event.target.value);
@@ -65,7 +64,6 @@ const fetchCustomers = async (token) => {
       const url = selectedOption === "user" ? `/admin/employee` : `/admin/customer`;
       await callAPI(url, "POST", editedData, token);
 
-      // Update the respective list with the edited data
       if (selectedOption === "user") {
         const updatedStaff = [...staff];
         updatedStaff[editingRow] = editedData;
@@ -76,7 +74,7 @@ const fetchCustomers = async (token) => {
         setCustomers(updatedCustomers);
       }
 
-      setEditingRow(null); // Dừng việc chỉnh sửa
+      setEditingRow(null);
     } catch (error) {
       setError("Failed to save changes.");
     }
@@ -92,7 +90,7 @@ const fetchCustomers = async (token) => {
     } else {
       setCustomers(customers.filter((_, index) => index !== editingRow));
     }
-    setEditingRow(null); // Hủy chỉnh sửa nếu đang chỉnh sửa
+    setEditingRow(null);
   };
 
   if (!user || user.role !== 'admin') {
@@ -105,7 +103,6 @@ const fetchCustomers = async (token) => {
 
   return (
     <div style={{ padding: "80px 10px" }}>
-      {/* Checkbox chọn giữa User và Customer */}
       <div style={{ display: "flex", justifyContent: "center", marginBottom: "20px" }}>
         <div style={{ marginRight: "100px"}}>
           <input type="radio" value="user" checked={selectedOption === "user"} onChange={handleCheckboxChange} style={{ accentColor: "#458A55", marginRight: "10px"}} />
@@ -117,16 +114,6 @@ const fetchCustomers = async (token) => {
         </div>
       </div>
 
-      {/* Nút Save khi đang chỉnh sửa */}
-      {editingRow !== null && (
-        <div style={{ textAlign: "right", marginBottom: "20px" }}>
-          <button onClick={handleSaveClick} style={{ backgroundColor: "#458A55", color: "#fff", padding: "10px 20px", borderRadius: "5px", border: "none", cursor: "pointer" }}>
-            Save
-          </button>
-        </div>
-      )}
-
-      {/* Bảng hiển thị User */}
       {selectedOption === "user" && (
         <table style={{ width: "100%", borderCollapse: "collapse", backgroundColor: "#fff", color: "#000", border: "2px solid #E49F15" }}>
           <thead>
@@ -142,16 +129,15 @@ const fetchCustomers = async (token) => {
           <tbody>
             {staff.length === 0 ? (
               <tr>
-                <td colSpan="9" style={{ textAlign: "center", padding: "20px", fontSize: "16px" }}>No data available</td>
+                <td colSpan="6" style={{ textAlign: "center", padding: "20px", fontSize: "16px" }}>No data available</td>
               </tr>
             ) : (
               staff.map((user, index) => (
                 <tr key={index} style={{ backgroundColor: editingRow === index ? "#D9D9D9" : "transparent" }}>
                   <td style={{ padding: "10px", border: "2px solid #E49F15" }}>{user.idEmployee}</td>
-                  
                   <td style={{ padding: "10px", border: "2px solid #E49F15" }}>
                     {editingRow === index ? (
-                      <input type="text" value={editedData.lastName} onChange={(e) => handleInputChange(e, "Name")} />
+                      <input type="text" value={editedData.name} onChange={(e) => handleInputChange(e, "name")} />
                     ) : (
                       user.name
                     )}
@@ -173,11 +159,16 @@ const fetchCustomers = async (token) => {
                   <td style={{ padding: "10px", border: "2px solid #E49F15" }}>{user.username}</td>
                   <td style={{ padding: "10px", border: "2px solid #E49F15" }}>
                     {editingRow === index ? (
-                      <button onClick={() => setEditingRow(null)} style={{ backgroundColor: "#458A55", color: "#fff", borderRadius: "5px", padding: "5px 10px", marginRight: "5px" }}>Cancel</button>
+                      <>
+                        <button onClick={() => setEditingRow(null)} style={{ backgroundColor: "#458A55", color: "#fff", borderRadius: "5px", padding: "5px 10px", marginRight: "5px" }}>Cancel</button>
+                        <button onClick={handleSaveClick} style={{ backgroundColor: "#458A55", color: "#fff", borderRadius: "5px", padding: "5px 10px" }}>Save</button>
+                      </>
                     ) : (
-                      <button onClick={() => handleEditClick(index)} style={{ backgroundColor: "#458A55", color: "#fff", borderRadius: "5px", padding: "5px 10px", marginRight: "5px" }}>Edit</button>
+                      <>
+                        <button onClick={() => handleEditClick(index)} style={{ backgroundColor: "#458A55", color: "#fff", borderRadius: "5px", padding: "5px 10px", marginRight: "5px" }}>Edit</button>
+                        <button onClick={() => handleDeleteClick(user.id)} style={{ backgroundColor: "#458A55", color: "#fff", borderRadius: "5px", padding: "5px 10px" }}>Delete</button>
+                      </>
                     )}
-                    <button onClick={() => handleDeleteClick(user.id)} style={{ backgroundColor: "#458A55", color: "#fff", borderRadius: "5px", padding: "5px 10px" }}>Delete</button>
                   </td>
                 </tr>
               ))
@@ -186,7 +177,6 @@ const fetchCustomers = async (token) => {
         </table>
       )}
 
-      {/* Tương tự cho bảng Customer */}
       {selectedOption === "customer" && (
         <table style={{ width: "100%", borderCollapse: "collapse", backgroundColor: "#fff", color: "#000", border: "2px solid #E49F15" }}>
           <thead>
@@ -200,7 +190,7 @@ const fetchCustomers = async (token) => {
           <tbody>
             {customers.length === 0 ? (
               <tr>
-                <td colSpan="7" style={{ textAlign: "center", padding: "20px", fontSize: "16px" }}>No data available</td>
+                <td colSpan="4" style={{ textAlign: "center", padding: "20px", fontSize: "16px" }}>No data available</td>
               </tr>
             ) : (
               customers.map((customer, index) => (
@@ -208,7 +198,7 @@ const fetchCustomers = async (token) => {
                   <td style={{ padding: "10px", border: "2px solid #E49F15" }}>{customer.customerId}</td>
                   <td style={{ padding: "10px", border: "2px solid #E49F15" }}>
                     {editingRow === index ? (
-                      <input type="text" value={editedData.lastName} onChange={(e) => handleInputChange(e, "Name")} />
+                      <input type="text" value={editedData.name} onChange={(e) => handleInputChange(e, "name")} />
                     ) : (
                       customer.name
                     )}
@@ -222,11 +212,16 @@ const fetchCustomers = async (token) => {
                   </td>
                   <td style={{ padding: "10px", border: "2px solid #E49F15" }}>
                     {editingRow === index ? (
-                      <button onClick={() => setEditingRow(null)} style={{ backgroundColor: "#458A55", color: "#fff", borderRadius: "5px", padding: "5px 10px", marginRight: "5px" }}>Cancel</button>
+                      <>
+                        <button onClick={() => setEditingRow(null)} style={{ backgroundColor: "#458A55", color: "#fff", borderRadius: "5px", padding: "5px 10px", marginRight: "5px" }}>Cancel</button>
+                        <button onClick={handleSaveClick} style={{ backgroundColor: "#458A55", color: "#fff", borderRadius: "5px", padding: "5px 10px" }}>Save</button>
+                      </>
                     ) : (
-                      <button onClick={() => handleEditClick(index)} style={{ backgroundColor: "#458A55", color: "#fff", borderRadius: "5px", padding: "5px 10px", marginRight: "5px" }}>Edit</button>
+                      <>
+                        <button onClick={() => handleEditClick(index)} style={{ backgroundColor: "#458A55", color: "#fff", borderRadius: "5px", padding: "5px 10px", marginRight: "5px" }}>Edit</button>
+                        <button onClick={() => handleDeleteClick(customer.id)} style={{ backgroundColor: "#458A55", color: "#fff", borderRadius: "5px", padding: "5px 10px" }}>Delete</button>
+                      </>
                     )}
-                    <button onClick={() => handleDeleteClick(customer.id)} style={{ backgroundColor: "#458A55", color: "#fff", borderRadius: "5px", padding: "5px 10px" }}>Delete</button>
                   </td>
                 </tr>
               ))
