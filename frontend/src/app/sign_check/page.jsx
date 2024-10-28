@@ -1,7 +1,8 @@
 'use client';
 import React, { useEffect, useState } from 'react';
+
 import { useRouter } from 'next/navigation';
-import Header from "@/components/header"; 
+import Header from "@/components/header";
 import ImageUploading from 'react-images-uploading';
 import { callAPI } from "@/utils/api-caller";
 import { getUser } from '@/utils/helper';
@@ -39,29 +40,32 @@ const SignatureCheck = () => {
 
     const handleSubmit = async () => {
         try {
-            if (images && images.length > 0 && customerId) { // Ensure customerId is entered
+            if (images && images.length > 0 && customerId) {
                 const formData = new FormData();
-                formData.append('image', images[0].file); // Send the uploaded image
-                formData.append('customerId', customerId); // Include customerId
-
-                // First call to load the signature
+                formData.append('image', images[0].file);
+                formData.append('customerId', customerId);
+    
                 const loadResponse = await callAPI("/load_signature", "POST", formData, null, true);
-                
+    
                 if (loadResponse) {
                     console.log('Load image successfully');
                     const exchangeId = loadResponse.data.id;
-                    
-                    // Now call /api/verify_signature after loading the signature
-                    const verifyData = { customer_id: customerId, exchange_id: exchangeId }; // Create a payload for verification
+                    const is_verified=loadResponse.data.is_verified;
+    
+                    const verifyData = { customer_id: customerId, exchange_id: exchangeId, is_verified:is_verified };
                     const verifyResponse = await callAPI("/verify_signature", "POST", JSON.stringify(verifyData), {
                         'Content-Type': 'application/json'
                     });
+                    console.log(verifyResponse);
+                    console.log('Verification response data:', verifyResponse.data );
                     console.log(verifyResponse.status);
-                    // Check if verification response is successful
+                    console.log(verifyResponse.data);
+
+    
+                    // Kiểm tra giá trị `is_verified` trong verifyResponse để cập nhật `result`
                     if (verifyResponse.status === 200) {
-                        setResult("TRUE");
-                    } else if (verifyResponse.status === 401) {
-                        setResult("FALSE");
+                        const is_verified = verifyResponse.data.is_verified;  // Lấy is_verified từ phản hồi
+                        setResult(is_verified ? "TRUE" : "FALSE");
                     } else {
                         setResult("NULL");
                         setErrorText("Error: Unable to verify signature.");
@@ -79,6 +83,8 @@ const SignatureCheck = () => {
             setErrorText('Server error. Please try again later.');
         }
     };
+    
+
 
     return (
         <div style={{ backgroundColor: '#f9f9f9', padding: '20px' }}>
@@ -108,56 +114,60 @@ const SignatureCheck = () => {
                                     marginBottom: '20px'
                                 }}
                             />
-                        {images && images.length > 0 ? (
-                            <img src={images[0].data_url} alt="" style={{ borderRadius: '8px', width: '100%', maxWidth: '300px', marginBottom: '20px' }} />
-                        ) : (
-                            <div style={{ padding: '40px', border: '1px dashed #c0c0c0', borderRadius: '8px', marginBottom: '20px' }}>
-                                No image uploaded
-                            </div>
-                        )}
-                        <ImageUploading
-                            multiple
-                            value={images}
-                            onChange={onChange}
-                            maxNumber={maxNumber}
-                            dataURLKey="data_url"
-                        >
-                            {({
-                                onImageUpload,
-                                onImageRemoveAll,
-                                isDragging,
-                                dragProps
-                            }) => (
-                                <div style={{ display: 'flex', justifyContent: 'space-between', margin: '10px auto' }}>
-                                    <button
-                                        style={isDragging ? { ...buttonStyle, color: "red" } : buttonStyle}
-                                        onClick={onImageUpload}
-                                        {...dragProps}
-                                    >
-                                        Upload
-                                    </button>
-                                    <button
-                                        onClick={handleSubmit}
-                                        style={buttonStyle}
-                                    >
-                                        Submit
-                                    </button>
-                                    <button
-                                        onClick={onImageRemoveAll}
-                                        style={buttonStyle}
-                                    >
-                                        Remove
-                                    </button>
+                            {images && images.length > 0 ? (
+                                <img src={images[0].data_url} alt="" style={{ borderRadius: '8px', width: '100%', maxWidth: '300px', marginBottom: '20px' }} />
+                            ) : (
+                                <div style={{ padding: '40px', border: '1px dashed #c0c0c0', borderRadius: '8px', marginBottom: '20px' }}>
+                                    No image uploaded
                                 </div>
                             )}
-                        </ImageUploading>
-                        {/* Error message display */}
-                        {errorText && (
-                            <div style={{ color: 'red', marginTop: '10px' }}>
-                                {errorText}
-                            </div>
-                        )}
-                        
+                            <ImageUploading
+                                multiple
+                                value={images}
+                                onChange={onChange}
+                                maxNumber={maxNumber}
+                                dataURLKey="data_url"
+                            >
+                                {({
+                                    onImageUpload,
+                                    onImageRemoveAll,
+                                    isDragging,
+                                    dragProps
+                                }) => (
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', margin: '10px auto' }}>
+                                        <button
+                                            style={isDragging ? { ...buttonStyle, color: "red" } : buttonStyle}
+                                            onClick={onImageUpload}
+                                            {...dragProps}
+                                        >
+                                            Upload
+                                        </button>
+                                        <button
+                                            onClick={handleSubmit}
+                                            style={buttonStyle}
+                                        >
+                                            Submit
+                                        </button>
+                                        <button
+                                            onClick={() => {
+                                                onImageRemoveAll();
+                                                setResult("NULL"); // Reset result when removing the image
+                                            }}
+                                            style={buttonStyle}
+                                        >
+                                            Remove
+                                        </button>
+                                    </div>
+                                )}
+                            </ImageUploading>
+
+                            {/* Error message display */}
+                            {errorText && (
+                                <div style={{ color: 'red', marginTop: '10px' }}>
+                                    {errorText}
+                                </div>
+                            )}
+
                         </div>
                     </div>
                 </div>
@@ -167,8 +177,9 @@ const SignatureCheck = () => {
                     <div style={{ padding: '20px', borderRadius: '8px', border: '1px solid #c0c0c0', backgroundColor: '#fff', textAlign: 'center' }}>
                         <h2 style={{ color: '#458A55', fontWeight: 'bold', fontSize: '24px' }}>Result:</h2>
                         <div style={{ padding: '10px', border: '1px solid black', borderRadius: '4px', backgroundColor: '#fff', marginBottom: '20px', minHeight: '100px' }}>
-                            {result ? <p>{result}</p> : <p>No result yet.</p>}
+                            {result === "NULL" ? <p>No result yet.</p> : <p>{result === "TRUE" ? "This signature is similar with the orginal" : "This signature is not similar with the orginal"}</p>}
                         </div>
+
                     </div>
                 </div>
             </div>
