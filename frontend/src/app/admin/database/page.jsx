@@ -129,6 +129,7 @@ const AdminDatabasePage = () => {
               <th style={{ padding: "10px", border: "2px solid #E49F15" }}>Email</th>
               <th style={{ padding: "10px", border: "2px solid #E49F15" }}>Phone Number</th>
               <th style={{ padding: "10px", border: "2px solid #E49F15" }}>Username</th>
+              <th style={{ padding: "10px", border: "2px solid #E49F15" }}>Password</th>
               <th style={{ padding: "10px", border: "2px solid #E49F15" }}>Actions</th>
             </tr>
           </thead>
@@ -140,30 +141,37 @@ const AdminDatabasePage = () => {
             ) : (
               staff.map((user, index) => (
                 <tr key={index} style={{ backgroundColor: editingRow === index ? "#D9D9D9" : "transparent" }}>
-                  <td style={{ padding: "10px", border: "2px solid #E49F15" }}>{user.idEmployee}</td>
-                  <td style={{ padding: "10px", border: "2px solid #E49F15" }}>
+                  <td style={{ padding: "10px", border: "2px solid #E49F15", width: "8%", textAlign: "center" }}>{user.idEmployee}</td>
+                  <td style={{ padding: "10px", border: "2px solid #E49F15", width: "15%" }}>
                     {editingRow === index ? (
-                      <input type="text" value={editedData.name} onChange={(e) => handleInputChange(e, "name")} />
+                      <input style={{width: "100%", border: "none", outline: "none", padding: "1px"}} type="text" value={editedData.name} onChange={(e) => handleInputChange(e, "name")} />
                     ) : (
                       user.name
                     )}
                   </td>
-                  <td style={{ padding: "10px", border: "2px solid #E49F15" }}>
+                  <td style={{ padding: "10px", border: "2px solid #E49F15", width: "23%" }}>
                     {editingRow === index ? (
-                      <input type="text" value={editedData.email} onChange={(e) => handleInputChange(e, "email")} />
+                      <input style={{width: "100%", border: "none", outline: "none", padding: "1px"}} type="text" value={editedData.email} onChange={(e) => handleInputChange(e, "email")} />
                     ) : (
                       user.email
                     )}
                   </td>
-                  <td style={{ padding: "10px", border: "2px solid #E49F15" }}>
+                  <td style={{ padding: "10px", border: "2px solid #E49F15", width: "12%" }}>
                     {editingRow === index ? (
-                      <input type="text" value={editedData.phoneNumber} onChange={(e) => handleInputChange(e, "phoneNumber")} />
+                      <input style={{width: "100%", border: "none", outline: "none", padding: "1px"}} type="text" value={editedData.phoneNumber} onChange={(e) => handleInputChange(e, "phoneNumber")} />
                     ) : (
                       user.phoneNumber
                     )}
                   </td>
-                  <td style={{ padding: "10px", border: "2px solid #E49F15" }}>{user.username}</td>
-                  <td style={{ padding: "10px", border: "2px solid #E49F15" }}>
+                  <td style={{ padding: "10px", border: "2px solid #E49F15", width: "12%" }}>{user.username}</td>
+                  <td style={{ padding: "10px", border: "2px solid #E49F15", width: "18%" }}>
+                    {editingRow === index ? (
+                      <input style={{width: "100%", border: "none", outline: "none", padding: "1px"}} type="text" value={editedData.password1} onChange={(e) => handleInputChange(e, "password1")} />
+                    ) : (
+                      user.password1
+                    )}
+                  </td>
+                  <td style={{ padding: "10px", border: "2px solid #E49F15", width: "12%", textAlign: "center" }}>
                     {editingRow === index ? (
                       <>
                         <button type="button" onClick={() => setEditingRow(null)} style={{ backgroundColor: "#458A55", color: "#fff", borderRadius: "5px", padding: "5px 10px", marginRight: "5px" }}>Cancel</button>
@@ -201,22 +209,22 @@ const AdminDatabasePage = () => {
             ) : (
               customers.map((customer, index) => (
                 <tr key={index} style={{ backgroundColor: editingRow === index ? "#D9D9D9" : "transparent" }}>
-                  <td style={{ padding: "10px", border: "2px solid #E49F15" }}>{customer.customerId}</td>
-                  <td style={{ padding: "10px", border: "2px solid #E49F15" }}>
+                  <td style={{ padding: "10px", border: "2px solid #E49F15", width: "10%", textAlign: "center" }}>{customer.customerId}</td>
+                  <td style={{ padding: "10px", border: "2px solid #E49F15", width: "40%" }}>
                     {editingRow === index ? (
-                      <input type="text" value={editedData.name} onChange={(e) => handleInputChange(e, "name")} />
+                      <input style={{width: "100%", border: "none", outline: "none", padding: "1px"}} type="text" value={editedData.name} onChange={(e) => handleInputChange(e, "name")} />
                     ) : (
                       customer.name
                     )}
                   </td>
-                  <td style={{ padding: "10px", border: "2px solid #E49F15" }}>
+                  <td style={{ padding: "10px", border: "2px solid #E49F15", width: "35%" }}>
                     {editingRow === index ? (
-                      <input type="text" value={editedData.phoneNumber} onChange={(e) => handleInputChange(e, "phoneNumber")} />
+                      <input style={{width: "100%", border: "none", outline: "none", padding: "1px"}} type="text" value={editedData.phoneNumber} onChange={(e) => handleInputChange(e, "phoneNumber")} />
                     ) : (
                       customer.phoneNumber
                     )}
                   </td>
-                  <td style={{ padding: "10px", border: "2px solid #E49F15" }}>
+                  <td style={{ padding: "10px", border: "2px solid #E49F15", textAlign: "center", width: "15%" }}>
                     {editingRow === index ? (
                       <>
                         <button type="button" onClick={() => setEditingRow(null)} style={{ backgroundColor: "#458A55", color: "#fff", borderRadius: "5px", padding: "5px 10px", marginRight: "5px" }}>Cancel</button>
