@@ -57,7 +57,7 @@ const AddCustomer = () => {
   };
 
   const navigateToCustomerList = () => {
-    router.push("/confirm");
+    router.push("/view-customer-list");
   };
 
   const handleImageChange = (e) => {
