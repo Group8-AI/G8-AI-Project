@@ -27,6 +27,7 @@ const LoginPage = () => {
         setToken(token);
         setUser(user); // Save user data including role
         
+        
         // Redirect based on user role
         if (user.role === "admin") {
           router.replace("/admin/dashboard"); // Redirect to admin dashboard

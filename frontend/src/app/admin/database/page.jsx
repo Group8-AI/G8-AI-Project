@@ -7,6 +7,7 @@ import { getToken, getUser } from '@/utils/helper';
 
 const AdminDatabasePage = () => {
   const [selectedOption, setSelectedOption] = useState("user");
+  const [isFetch, setIsFetch] = useState(false)
   const [staff, setStaff] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [editingRow, setEditingRow] = useState(null);
@@ -24,7 +25,7 @@ const AdminDatabasePage = () => {
       fetchStaff(token);
       fetchCustomers(token);
     }
-  }, [user, token]);
+  }, [isFetch]);
 
   const fetchStaff = async (token) => {
     try {
@@ -59,10 +60,12 @@ const AdminDatabasePage = () => {
   };
 
   const handleSaveClick = async () => {
-    const token = getToken();
+    console.log('click')
     try {
+      const token = getToken();
       const url = selectedOption === "user" ? `/admin/employee` : `/admin/customer`;
-      await callAPI(url, "POST", editedData, token);
+
+      await callAPI(url, "POST", { ...editedData, id: editedData._id, action: "edit" }, null, false, token);
 
       if (selectedOption === "user") {
         const updatedStaff = [...staff];
@@ -75,6 +78,7 @@ const AdminDatabasePage = () => {
       }
 
       setEditingRow(null);
+      setIsFetch(!isFetch)
     } catch (error) {
       setError("Failed to save changes.");
     }
@@ -83,7 +87,8 @@ const AdminDatabasePage = () => {
   const handleDeleteClick = async (id) => {
     const token = getToken();
     const url = selectedOption === "user" ? `/admin/employee` : `/admin/customer`;
-    await callAPI(url, "POST", { id, action: "delete" }, token);
+
+    await callAPI(url, "POST", { id, action: "delete" }, null, false, token);
 
     if (selectedOption === "user") {
       setStaff(staff.filter((_, index) => index !== editingRow));
@@ -91,6 +96,7 @@ const AdminDatabasePage = () => {
       setCustomers(customers.filter((_, index) => index !== editingRow));
     }
     setEditingRow(null);
+    setIsFetch(!isFetch)
   };
 
   if (!user || user.role !== 'admin') {
@@ -119,7 +125,7 @@ const AdminDatabasePage = () => {
           <thead>
             <tr style={{ backgroundColor: "#458A55", color: "#fff" }}>
               <th style={{ padding: "10px", border: "2px solid #E49F15" }}>ID Employee</th>
-              <th style={{ padding: "10px", border: "2px solid #E49F15" }}> Name</th>
+              <th style={{ padding: "10px", border: "2px solid #E49F15" }}>Name</th>
               <th style={{ padding: "10px", border: "2px solid #E49F15" }}>Email</th>
               <th style={{ padding: "10px", border: "2px solid #E49F15" }}>Phone Number</th>
               <th style={{ padding: "10px", border: "2px solid #E49F15" }}>Username</th>
@@ -160,13 +166,13 @@ const AdminDatabasePage = () => {
                   <td style={{ padding: "10px", border: "2px solid #E49F15" }}>
                     {editingRow === index ? (
                       <>
-                        <button onClick={() => setEditingRow(null)} style={{ backgroundColor: "#458A55", color: "#fff", borderRadius: "5px", padding: "5px 10px", marginRight: "5px" }}>Cancel</button>
-                        <button onClick={handleSaveClick} style={{ backgroundColor: "#458A55", color: "#fff", borderRadius: "5px", padding: "5px 10px" }}>Save</button>
+                        <button type="button" onClick={() => setEditingRow(null)} style={{ backgroundColor: "#458A55", color: "#fff", borderRadius: "5px", padding: "5px 10px", marginRight: "5px" }}>Cancel</button>
+                        <button type="button" onClick={() => handleSaveClick()} style={{ backgroundColor: "#458A55", color: "#fff", borderRadius: "5px", padding: "5px 10px" }}>Save</button>
                       </>
                     ) : (
                       <>
-                        <button onClick={() => handleEditClick(index)} style={{ backgroundColor: "#458A55", color: "#fff", borderRadius: "5px", padding: "5px 10px", marginRight: "5px" }}>Edit</button>
-                        <button onClick={() => handleDeleteClick(user.id)} style={{ backgroundColor: "#458A55", color: "#fff", borderRadius: "5px", padding: "5px 10px" }}>Delete</button>
+                        <button type="button" onClick={() => handleEditClick(index)} style={{ backgroundColor: "#458A55", color: "#fff", borderRadius: "5px", padding: "5px 10px", marginRight: "5px" }}>Edit</button>
+                        <button type="button" onClick={() => handleDeleteClick(user._id)} style={{ backgroundColor: "#458A55", color: "#fff", borderRadius: "5px", padding: "5px 10px" }}>Delete</button>
                       </>
                     )}
                   </td>
@@ -213,13 +219,13 @@ const AdminDatabasePage = () => {
                   <td style={{ padding: "10px", border: "2px solid #E49F15" }}>
                     {editingRow === index ? (
                       <>
-                        <button onClick={() => setEditingRow(null)} style={{ backgroundColor: "#458A55", color: "#fff", borderRadius: "5px", padding: "5px 10px", marginRight: "5px" }}>Cancel</button>
-                        <button onClick={handleSaveClick} style={{ backgroundColor: "#458A55", color: "#fff", borderRadius: "5px", padding: "5px 10px" }}>Save</button>
+                        <button type="button" onClick={() => setEditingRow(null)} style={{ backgroundColor: "#458A55", color: "#fff", borderRadius: "5px", padding: "5px 10px", marginRight: "5px" }}>Cancel</button>
+                        <button type="button" onClick={() => handleSaveClick()} style={{ backgroundColor: "#458A55", color: "#fff", borderRadius: "5px", padding: "5px 10px" }}>Save</button>
                       </>
                     ) : (
                       <>
-                        <button onClick={() => handleEditClick(index)} style={{ backgroundColor: "#458A55", color: "#fff", borderRadius: "5px", padding: "5px 10px", marginRight: "5px" }}>Edit</button>
-                        <button onClick={() => handleDeleteClick(customer.id)} style={{ backgroundColor: "#458A55", color: "#fff", borderRadius: "5px", padding: "5px 10px" }}>Delete</button>
+                        <button type="button" onClick={() => handleEditClick(index)} style={{ backgroundColor: "#458A55", color: "#fff", borderRadius: "5px", padding: "5px 10px", marginRight: "5px" }}>Edit</button>
+                        <button type="button" onClick={() => handleDeleteClick(customer._id)} style={{ backgroundColor: "#458A55", color: "#fff", borderRadius: "5px", padding: "5px 10px" }}>Delete</button>
                       </>
                     )}
                   </td>
