@@ -99,14 +99,6 @@ const AdminDatabasePage = () => {
     setIsFetch(!isFetch)
   };
 
-  if (!user || user.role !== 'admin') {
-    return (
-      <div style={{ textAlign: 'center', marginTop: '100px' }}>
-        <h2>Unauthorized Access</h2>
-      </div>
-    );
-  }
-
   return (
     <div style={{ padding: "80px 10px" }}>
       <div style={{ display: "flex", justifyContent: "center", marginBottom: "20px" }}>
@@ -166,9 +158,9 @@ const AdminDatabasePage = () => {
                   <td style={{ padding: "10px", border: "2px solid #E49F15", width: "12%" }}>{user.username}</td>
                   <td style={{ padding: "10px", border: "2px solid #E49F15", width: "18%" }}>
                     {editingRow === index ? (
-                      <input style={{width: "100%", border: "none", outline: "none", padding: "1px"}} type="text" value={editedData.password1} onChange={(e) => handleInputChange(e, "password1")} />
+                      <input style={{width: "100%", border: "none", outline: "none", padding: "1px"}} type="text" value={editedData.password} onChange={(e) => handleInputChange(e, "password")} />
                     ) : (
-                      user.password1
+                      '*********'
                     )}
                   </td>
                   <td style={{ padding: "10px", border: "2px solid #E49F15", width: "12%", textAlign: "center" }}>

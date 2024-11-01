@@ -79,5 +79,6 @@ class StaffModel(BaseModel):
         # Convert MongoDB documents to JSON serializable format if needed
         for doc in documents:
             doc['_id'] = str(doc['_id'])  # Convert ObjectId to string
+            doc.pop('password', None)
        
         return documents
