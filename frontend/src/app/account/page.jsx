@@ -19,7 +19,10 @@ const MyAccount = () => {
     phoneNumber: "",
     email: "",
     username: "",
+    role:"",
   });
+  const user =  getUser();
+
   useEffect(() => {
     fetchAccountData()
   }, []);
@@ -27,11 +30,10 @@ const MyAccount = () => {
   // Lấy dữ liệu người dùng từ localStorage
   const fetchAccountData = async () => {
     try {
-      const response = await callAPI("/admin/staff", "GET"); // Adjust the route
-      console.log(response);
-      const account = response.data[0];
+      const response = await callAPI("/account/infor", "POST", {username: user.username})// Adjust the route
+     
+      const account = response.data["data"];
       setAccount(account); // Assuming 'setAccount' updates the UI state
-      console.log(data);
     } catch (error) {
       
     }

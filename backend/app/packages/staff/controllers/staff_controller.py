@@ -41,7 +41,13 @@ class StaffController(BaseController):
             return self.service.account_response(account)
         else:
             return jsonify({"error": "Account not found"}), 404
-
+    def get_infor(self,username):
+        account=self.service.get_by_username(username)
+        if account:
+            return jsonify({"message": "Account ok",  "data": account}), 200
+        else:
+            return jsonify({"error": "Account not found"}), 404
+        
 user_controller = StaffController()
 
 @app.route('/api/user/signup', methods=['POST'])
@@ -69,3 +75,9 @@ def  get_staff():
 @app.route('/api/account', methods=['GET'])
 def get_account_info():
     return user_controller.get_account_info()
+
+
+@app.route('/api/account/infor',methods=['POST'])
+def get_account():
+    data = request.json
+    return user_controller.get_infor(data["username"])

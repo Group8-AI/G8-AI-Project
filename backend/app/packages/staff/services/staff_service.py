@@ -17,7 +17,10 @@ class StaffService(BaseService):
     def get_by_email(self, email):
         user = self.model.get_by_email(email)
         return user
-   
+    
+    def get_by_username(self, username):
+        user = self.model.get_by_username(username)
+        return user
     # Hàm để cập nhật thông tin nhân viên
     def update_employee(self, data):
         print(f"Service employee_data: {data}")
@@ -58,4 +61,6 @@ class StaffService(BaseService):
         return {"message": "Employee deleted successfully"}, 200
     def get_all(self):
         return self.model.get_all()
+    def account(self,data):
+        return self.model.get_by_email(data)
 

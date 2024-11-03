@@ -10,7 +10,7 @@ class SignatureProcessor:
     def __init__(self):
         # Load các model
 
-        self.verification_model = tf.keras.models.load_model('../model/saved_models/signetmodel')
+        self.verification_model = tf.keras.models.load_model('app/model/signetmodel')
 
     def preprocess_image(self, img_path):
         test_image = Image.open(img_path)
